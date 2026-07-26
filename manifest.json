@@ -1,0 +1,21 @@
+{
+  "name": "HR-BLK53-System",
+  "short_name": "HR-BLK53",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#1e293b",
+  "description": "HR Rotations & Daily Movements Tracker for Offline use.",
+  "icons": [
+    {
+      "src": "logo_v4.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo_v4.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -993,7 +993,8 @@ body.app-loaded #splash-screen {
             <div class="header-section">
                 <h2 class="gradient-text" style="margin: 0;">📅 Employee Timesheet</h2>
                 <div class="header-actions">
-                    <button class="btn btn-outline" onclick="autoFillTimesheet()" title="Auto-fill based on planned rotations">⚡ Auto Fill</button>
+                    <button class="btn btn-outline" style="border-color: #10b981; color: #10b981;" onclick="exportTimesheetToExcel()">📥 Export Excel</button>
+                      <button class="btn btn-outline" onclick="autoFillTimesheet()" title="Auto-fill based on planned rotations">⚡ Auto Fill</button>
                     <button class="btn" onclick="saveTimesheet()">💾 Save Timesheet</button>
                 </div>
             </div>
@@ -1068,10 +1069,10 @@ body.app-loaded #splash-screen {
                 .timesheet-table th:first-child, .timesheet-table th:nth-child(2) {
                     z-index: 30;
                 }
-                .ts-cell-1 { background-color: #0ea5e9 !important; color: white !important; font-weight: bold; }
+                .ts-cell-ON { background-color: #3b82f6 !important; color: white !important; font-weight: bold; }
                 .ts-cell-E { background-color: #ef4444 !important; color: white !important; font-weight: bold; }
                 .ts-cell-X { background-color: #10b981 !important; color: white !important; font-weight: bold; }
-                .ts-cell-empty { background-color: transparent !important; }
+                .ts-cell-empty { background-color: rgba(255,255,255,0.1) !important; color: white !important; }
                 .ts-cell { cursor: pointer; user-select: none; transition: opacity 0.2s; }
                 .ts-cell:hover { opacity: 0.8; }
                 .ts-cell:active { transform: scale(0.9); }
@@ -1082,13 +1083,15 @@ body.app-loaded #splash-screen {
                 .legend-box { width: 16px; height: 16px; border-radius: 4px; border: 1px solid var(--glass-border); }
             </style>
 
+            <div id="timesheetStats" style="display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;"></div>
+
             <div class="timesheet-legend">
-                <div class="legend-item"><div class="legend-box ts-cell-1"></div> On Duty (1)</div>
+                <div class="legend-item"><div class="legend-box ts-cell-ON"></div> On Duty (ON)</div>
                 <div class="legend-item"><div class="legend-box ts-cell-empty"></div> Off Duty</div>
                 <div class="legend-item"><div class="legend-box ts-cell-E"></div> Emergency (E)</div>
                 <div class="legend-item"><div class="legend-box ts-cell-X"></div> Extra Days (X)</div>
                 <div style="flex:1;"></div>
-                <div style="font-size: 12px; color: var(--text-muted);">Tip: Click a cell to toggle its state (1 -> E -> X -> empty)</div>
+                <div style="font-size: 12px; color: var(--text-muted);">Tip: Click a cell to toggle its state (ON -> E -> X -> empty)</div>
             </div>
 
             <div class="timesheet-wrapper">
@@ -2032,6 +2035,13 @@ body.app-loaded #splash-screen {
         const destOptions = `<option value="">Select...</option>` + sortedDestinations.map(d => `<option value="${d}">${d}</option>`).join('') + `<option value="ADD_NEW" style="font-weight:bold;color:#f9a826;">+ أضف جديد (Add New...)</option>`;
         const deptOptions = `<option value="">Select...</option>` + predefinedDepartments.map(d => `<option value="${d}">${d}</option>`).join('') + `<option value="ADD_NEW" style="font-weight:bold;color:#f9a826;">+ أضف جديد (Add New...)</option>`;
 
+        const tsCompanyFilter = document.getElementById('timesheetCompanyFilter');
+        if (tsCompanyFilter) {
+            const currentTsVal = tsCompanyFilter.value;
+            tsCompanyFilter.innerHTML = '<option value="All">All Companies</option>' + sortedCompanies.map(c => `<option value="${c}">${c}</option>`).join('');
+            if (sortedCompanies.includes(currentTsVal) || currentTsVal === 'All') tsCompanyFilter.value = currentTsVal;
+        }
+
         ['newEmpCompany', 'editEmpCompany'].forEach(id => {
             const el = document.getElementById(id);
             if(el) {
@@ -2223,9 +2233,9 @@ body.app-loaded #splash-screen {
             if (currentStatus === 'work' || currentStatus === 'standby_cover') {
                 statusDot = `<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#10b981; margin-right:8px; vertical-align:middle; box-shadow: 0 0 8px #10b981;" title="ON (At Work)"></span>`;
             } else if (currentStatus === 'leave' || currentStatus === 'rest') {
-                statusDot = `<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#ef4444; margin-right:8px; vertical-align:middle; box-shadow: 0 0 8px #ef4444;" title="OFF (On Leave)"></span>`;
+                statusDot = `<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#ffffff; margin-right:8px; vertical-align:middle; box-shadow: 0 0 8px rgba(255,255,255,0.5);" title="OFF (On Leave)"></span>`;
             } else if (currentStatus === 'sick_leave') {
-                statusDot = `<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#8b5cf6; margin-right:8px; vertical-align:middle; box-shadow: 0 0 8px #8b5cf6;" title="SL (Sick Leave)"></span>`;
+                statusDot = `<span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:#ef4444; margin-right:8px; vertical-align:middle; box-shadow: 0 0 8px #ef4444;" title="SL (Sick Leave)"></span>`;
             }
 
             let avatarHtml = '';
@@ -2759,7 +2769,7 @@ body.app-loaded #splash-screen {
                 labels: [`Work (${workCount})`, `Leave (${leaveCount})`, `Sick (${sickCount})`, `Missing (${missingCount})`],
                 datasets: [{
                     data: [workCount, leaveCount, sickCount, missingCount],
-                    backgroundColor: ['#10b981', '#ef4444', '#8b5cf6', '#f59e0b'],
+                    backgroundColor: ['#3b82f6', '#ffffff', '#ef4444', '#f59e0b'],
                     borderWidth: 0
                 }]
             },
@@ -3928,18 +3938,108 @@ body.app-loaded #splash-screen {
         }
     }
 
-    function renderTimesheetTable() {
+        
+
+    async function exportTimesheetToExcel() {
         const monthVal = document.getElementById('timesheetMonth').value;
         const dept = document.getElementById('timesheetDeptFilter').value;
+        const companyEl = document.getElementById('timesheetCompanyFilter');
+        const company = companyEl ? companyEl.value : "All";
+        
+        if (!monthVal || typeof employees === 'undefined') return;
+        
+        if (typeof ExcelJS === 'undefined') {
+            return Swal.fire('Error', 'Excel library is still loading. Please try again in a moment.', 'error');
+        }
+
+        const workbook = new ExcelJS.Workbook();
+        workbook.creator = 'Rotations System';
+        const sheet = workbook.addWorksheet('Timesheet');
+        
+        const [year, month] = monthVal.split('-');
+        const daysInMonth = getDaysInMonth(year, month);
+        
+        // Define Columns
+        const columns = [
+            { header: 'ID NO', key: 'id', width: 10 },
+            { header: 'Name', key: 'name', width: 30 }
+        ];
+        
+        for (let i = 1; i <= daysInMonth; i++) {
+            columns.push({ header: String(i), key: 'd' + i, width: 5 });
+        }
+        columns.push({ header: 'Total Duty Days', key: 'total', width: 15 });
+        columns.push({ header: 'Status', key: 'status', width: 15 });
+        
+        sheet.columns = columns;
+        
+        // Filter Employees
+        let filtered = employees;
+        if (dept !== "All") {
+            filtered = filtered.filter(e => e.Department === dept);
+        }
+        if (company !== "All") {
+            filtered = filtered.filter(e => e.Company === company);
+        }
+        
+        // Add Data
+        filtered.forEach(emp => {
+            const empData = currentTimesheetData[emp.ID] || {};
+            let totalDuty = 0;
+            const rowData = { id: emp.ID, name: emp.Name, status: 'Regular' };
+            
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayVal = empData[i] || '';
+                rowData['d' + i] = (dayVal === '1') ? 'ON' : dayVal;
+                if (dayVal === '1' || dayVal === 'ON' || dayVal === 'E' || dayVal === 'X') {
+                    totalDuty++;
+                }
+            }
+            rowData.total = totalDuty;
+            sheet.addRow(rowData);
+        });
+        
+        // Style Header
+        sheet.getRow(1).font = { bold: true };
+        sheet.getRow(1).alignment = { horizontal: 'center' };
+        
+        // Generate File
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `Timesheet_${monthVal}_${dept}${company !== 'All' ? '_' + company : ''}.xlsx`;
+        link.click();
+    }
+
+    function renderTimesheetTable() {
+    try {
+        const monthVal = document.getElementById('timesheetMonth').value;
+        const dept = document.getElementById('timesheetDeptFilter').value;
+        const companyEl = document.getElementById('timesheetCompanyFilter');
+        const company = companyEl ? companyEl.value : "All";
         if (!monthVal || typeof employees === 'undefined') return;
         
         const [year, month] = monthVal.split('-');
         const daysInMonth = getDaysInMonth(year, month);
         
+        // Find today
+        const today = new Date();
+        const isCurrentMonth = (today.getFullYear() === parseInt(year) && (today.getMonth() + 1) === parseInt(month));
+        const todayDate = today.getDate();
+        
         // Render Header
         let headHTML = `<th>ID NO</th><th>Name</th>`;
         for (let i = 1; i <= daysInMonth; i++) {
-            headHTML += `<th>${i}</th>`;
+            const currentDayDate = new Date(parseInt(year), parseInt(month)-1, i);
+            const isWeekend = currentDayDate.getDay() === 5 || currentDayDate.getDay() === 6;
+            const isToday = isCurrentMonth && (i === todayDate);
+            
+            let thStyle = '';
+            if (isToday) thStyle += 'border: 2px solid #f9a826; background: rgba(249, 168, 38, 0.1); color: #f9a826;';
+            else if (isWeekend) thStyle += 'background: rgba(255, 255, 255, 0.05);';
+            
+            headHTML += `<th style="${thStyle}">${i}</th>`;
         }
         headHTML += `<th>Total Duty Days</th><th>Status</th>`;
         document.getElementById('timesheetHeaderRow').innerHTML = headHTML;
@@ -3947,8 +4047,17 @@ body.app-loaded #splash-screen {
         // Filter Employees
         let filtered = employees;
         if (dept !== "All") {
-            filtered = employees.filter(e => e.Department === dept);
+            filtered = filtered.filter(e => e.Department === dept);
         }
+        if (company !== "All") {
+            filtered = filtered.filter(e => e.Company === company);
+        }
+        
+        // Stats
+        let totalOnDuty = 0;
+        let totalEmergency = 0;
+        let totalExtra = 0;
+        let dailyCounts = new Array(daysInMonth + 1).fill(0); // index 1 to daysInMonth
         
         // Render Body
         let bodyHTML = '';
@@ -3961,13 +4070,37 @@ body.app-loaded #splash-screen {
                 <td style="white-space: nowrap;">${emp.Name}</td>`;
                 
             for (let i = 1; i <= daysInMonth; i++) {
+                const currentDayDate = new Date(parseInt(year), parseInt(month)-1, i);
+                const isWeekend = currentDayDate.getDay() === 5 || currentDayDate.getDay() === 6;
+                const isToday = isCurrentMonth && (i === todayDate);
+                
+                let extraStyle = '';
+                if (isToday) extraStyle += 'border-left: 2px solid #f9a826; border-right: 2px solid #f9a826; background-color: rgba(249, 168, 38, 0.05);';
+                else if (isWeekend) extraStyle += 'background-color: rgba(0, 0, 0, 0.15);';
+                
                 const dayVal = empData[i] || '';
                 let cellClass = 'ts-cell-empty';
-                if (dayVal === '1') { cellClass = 'ts-cell-1'; totalDuty++; }
-                else if (dayVal === 'E') { cellClass = 'ts-cell-E'; totalDuty++; } 
-                else if (dayVal === 'X') { cellClass = 'ts-cell-X'; totalDuty++; }
                 
-                rowHTML += `<td class="ts-cell ${cellClass}" onclick="toggleTsCell('${emp.ID}', ${i}, this)" data-val="${dayVal}">${dayVal}</td>`;
+                if (dayVal === '1' || dayVal === 'ON') { 
+                    cellClass = 'ts-cell-ON'; 
+                    totalDuty++; 
+                    totalOnDuty++;
+                    dailyCounts[i]++;
+                }
+                else if (dayVal === 'E') { 
+                    cellClass = 'ts-cell-E'; 
+                    totalDuty++; 
+                    totalEmergency++;
+                    dailyCounts[i]++;
+                } 
+                else if (dayVal === 'X') { 
+                    cellClass = 'ts-cell-X'; 
+                    totalDuty++; 
+                    totalExtra++;
+                    dailyCounts[i]++;
+                }
+                
+                rowHTML += `<td class="ts-cell ${cellClass}" style="${extraStyle}" onclick="toggleTsCell('${emp.ID}', ${i}, this)" data-val="${dayVal === '1' ? 'ON' : dayVal}">${dayVal === '1' ? 'ON' : dayVal}</td>`;
             }
             
             rowHTML += `<td id="ts_total_${emp.ID}" style="font-weight:bold; color: var(--primary);">${totalDuty}</td>`;
@@ -3977,8 +4110,42 @@ body.app-loaded #splash-screen {
             bodyHTML += rowHTML;
         });
         
+        // Add Daily Summary Footer Row
+        let footerHTML = `<tr>
+              <td colspan="2" style="text-align: right; font-weight: bold; background: linear-gradient(90deg, var(--card-bg) 0%, rgba(59, 130, 246, 0.3) 100%); color: #3b82f6; position: sticky; left: 60px; z-index: 20; border-bottom: 2px solid #3b82f6; font-size: 14px; padding: 12px 10px; letter-spacing: 0.5px; text-transform: uppercase;">Total On Duty</td>`;
+          for (let i = 1; i <= daysInMonth; i++) {
+              const currentDayDate = new Date(parseInt(year), parseInt(month)-1, i);
+              const isToday = isCurrentMonth && (i === todayDate);
+              let ftStyle = 'font-weight:bold; background: rgba(59, 130, 246, 0.2); color: #fff; border-bottom: 2px solid #3b82f6; text-shadow: 0 0 5px rgba(59, 130, 246, 0.5); font-size: 14px;';
+              if (isToday) ftStyle += ' border: 2px solid #f9a826; background: rgba(249, 168, 38, 0.2); color: #f9a826; text-shadow: none;';
+              
+              footerHTML += `<td style="${ftStyle}">${dailyCounts[i] > 0 ? dailyCounts[i] : '-'}</td>`;
+          }
+          footerHTML += `<td colspan="2" style="background: rgba(59, 130, 246, 0.2); border-bottom: 2px solid #3b82f6;"></td></tr>`;
+          
+          bodyHTML = footerHTML + bodyHTML;
         document.getElementById('timesheetBody').innerHTML = bodyHTML;
+        
+        // Update Stats Cards
+        const statsHTML = `
+            <div class="stat-card" style="padding: 10px 15px; flex: 1; min-width: 150px; background: rgba(59, 130, 246, 0.1); border: 1px solid #3b82f6; border-radius: 8px;">
+                <div style="font-size: 12px; color: #3b82f6;">Total On Duty (ON)</div>
+                <div style="font-size: 20px; font-weight: bold;">${totalOnDuty} <span style="font-size: 12px; font-weight:normal;">days</span></div>
+            </div>
+            <div class="stat-card" style="padding: 10px 15px; flex: 1; min-width: 150px; background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; border-radius: 8px;">
+                <div style="font-size: 12px; color: #ef4444;">Total Emergency (E)</div>
+                <div style="font-size: 20px; font-weight: bold;">${totalEmergency} <span style="font-size: 12px; font-weight:normal;">days</span></div>
+            </div>
+            <div class="stat-card" style="padding: 10px 15px; flex: 1; min-width: 150px; background: rgba(16, 185, 129, 0.1); border: 1px solid #10b981; border-radius: 8px;">
+                <div style="font-size: 12px; color: #10b981;">Total Extra Days (X)</div>
+                <div style="font-size: 20px; font-weight: bold;">${totalExtra} <span style="font-size: 12px; font-weight:normal;">days</span></div>
+            </div>
+        `;
+        document.getElementById('timesheetStats').innerHTML = statsHTML;
+    } catch (e) {
+        Swal.fire("Error", e.message + e.stack, "error");
     }
+}
 
     function toggleTsCell(empId, day, cellElement) {
         let currentVal = cellElement.getAttribute('data-val') || '';
@@ -4039,7 +4206,7 @@ body.app-loaded #splash-screen {
                 const status = getEmployeeCurrentStatusForDate(emp, checkDateNum);
                 
                 if (status === 'work' || status === 'standby_cover') {
-                    currentTimesheetData[emp.ID][i] = '1';
+                    currentTimesheetData[emp.ID][i] = 'ON';
                 } else if (status === 'leave' || status === 'rest' || status === 'missing' || status === 'sick_leave') {
                     currentTimesheetData[emp.ID][i] = '';
                 }
