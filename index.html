@@ -879,6 +879,14 @@ select.inline-input { max-width: 90px; cursor: pointer; }
     </div>
 </div>
 
+<script>
+// Early definition so the button works immediately
+function toggleAIChat() {
+    var panel = document.getElementById('aiChatPanel');
+    if (panel) panel.classList.toggle('active');
+}
+</script>
+
 <!-- Cinematic Splash Screen -->
 <style>
 #splash-screen {
@@ -6964,8 +6972,6 @@ body.app-loaded #splash-screen {
             }
             event.target.value = ''; 
         };
-    async function handleCSVImport(event) {
-// [truncated... keeps old code exactly]
         reader.readAsText(file);
     }
     
