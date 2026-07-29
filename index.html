@@ -829,6 +829,56 @@ select.inline-input { max-width: 90px; cursor: pointer; }
 </head>
 <body>
 
+<!-- SMART PULSE AI UI -->
+<div class="ai-fab" id="aiFab" onclick="toggleAIChat()">
+    🤖
+</div>
+
+<div class="ai-chat-panel" id="aiChatPanel">
+    <div class="ai-header" ondblclick="toggleAIMaximize()" style="user-select: none; cursor: pointer;" title="انقر مرتين للتكبير أو التصغير">
+        <div class="ai-header-title">
+            <button onclick="openAISettings()" class="ai-icon-btn" style="margin-right: 5px;" title="إعدادات المساعد الذكي">⚙️</button>
+            🤖 Smart Pulse AI
+        </div>
+        <div class="ai-header-actions">
+            <button class="ai-icon-btn" onclick="toggleAIChat()" title="تصغير" style="font-weight:bold; font-size: 16px;">—</button>
+            <button class="ai-icon-btn" onclick="toggleAIChat()" title="إغلاق">✕</button>
+        </div>
+    </div>
+    
+    <div class="ai-messages" id="aiMessages">
+        <div class="ai-msg sys">مرحباً بك في المساعد الذكي الخاص بنظامك!</div>
+        <div class="ai-msg bot">كيف يمكنني مساعدتك اليوم؟ يمكنك سؤالي عن الغرف، الموظفين، أو تقارير الطوارئ.</div>
+    </div>
+    
+    <div class="ai-input-area">
+        <button class="ai-mic-btn" id="aiMicBtn" onclick="toggleAIVoice()" title="تحدث">🎤</button>
+        <input type="text" id="aiInput" placeholder="اكتب أمرك هنا... (مثال: من في الغرفة A1؟)" onkeypress="handleAIKeyPress(event)">
+        <button class="ai-send-btn" onclick="sendAIMessage()">➤</button>
+    </div>
+</div>
+
+<!-- AI API Settings Modal -->
+<div id="aiSettingsModal" class="modal" style="z-index: 10000;">
+    <div class="modal-content" style="max-width: 400px; text-align: right; direction: rtl;">
+        <h3 class="gradient-text" style="margin-top:0;">⚙️ إعدادات المساعد الذكي</h3>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
+            يرجى إدخال مفتاح (API Key) الخاص بـ Gemini لتفعيل الذكاء الاصطناعي. يتم حفظ المفتاح محلياً في متصفحك فقط.
+        </p>
+        <div class="input-group">
+            <label>Gemini API Key</label>
+            <div style="position: relative; display: flex; align-items: center;">
+                <input type="password" id="aiApiKeyInput" placeholder="AIzaSy..." style="width: 100%; padding-left: 40px; direction: ltr; text-align: left;">
+                <button onclick="toggleAIPassword()" id="aiToggleKeyBtn" style="position: absolute; left: 10px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px;" title="إظهار المفتاح">👁️</button>
+            </div>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end;">
+            <button class="btn btn-secondary" onclick="closeAISettings()">إلغاء</button>
+            <button class="btn btn-primary" onclick="saveAISettings()">حفظ</button>
+        </div>
+    </div>
+</div>
+
 <!-- Cinematic Splash Screen -->
 <style>
 #splash-screen {
@@ -6489,55 +6539,7 @@ body.app-loaded #splash-screen {
     
 })();
 </script>
-<!-- SMART PULSE AI UI -->
-<div class="ai-fab" id="aiFab" onclick="toggleAIChat()">
-    🤖
-</div>
 
-<div class="ai-chat-panel" id="aiChatPanel">
-    <div class="ai-header" ondblclick="toggleAIMaximize()" style="user-select: none; cursor: pointer;" title="انقر مرتين للتكبير أو التصغير">
-        <div class="ai-header-title">
-            <button onclick="openAISettings()" class="ai-icon-btn" style="margin-right: 5px;" title="إعدادات المساعد الذكي">⚙️</button>
-            🤖 Smart Pulse AI
-        </div>
-        <div class="ai-header-actions">
-            <button class="ai-icon-btn" onclick="toggleAIChat()" title="تصغير" style="font-weight:bold; font-size: 16px;">—</button>
-            <button class="ai-icon-btn" onclick="toggleAIChat()" title="إغلاق">✕</button>
-        </div>
-    </div>
-    
-    <div class="ai-messages" id="aiMessages">
-        <div class="ai-msg sys">مرحباً بك في المساعد الذكي الخاص بنظامك!</div>
-        <div class="ai-msg bot">كيف يمكنني مساعدتك اليوم؟ يمكنك سؤالي عن الغرف، الموظفين، أو تقارير الطوارئ.</div>
-    </div>
-    
-    <div class="ai-input-area">
-        <button class="ai-mic-btn" id="aiMicBtn" onclick="toggleAIVoice()" title="تحدث">🎤</button>
-        <input type="text" id="aiInput" placeholder="اكتب أمرك هنا... (مثال: من في الغرفة A1؟)" onkeypress="handleAIKeyPress(event)">
-        <button class="ai-send-btn" onclick="sendAIMessage()">➤</button>
-    </div>
-</div>
-
-<!-- AI API Settings Modal -->
-<div id="aiSettingsModal" class="modal" style="z-index: 10000;">
-    <div class="modal-content" style="max-width: 400px; text-align: right; direction: rtl;">
-        <h3 class="gradient-text" style="margin-top:0;">⚙️ إعدادات المساعد الذكي</h3>
-        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px;">
-            يرجى إدخال مفتاح (API Key) الخاص بـ Gemini لتفعيل الذكاء الاصطناعي. يتم حفظ المفتاح محلياً في متصفحك فقط.
-        </p>
-        <div class="input-group">
-            <label>Gemini API Key</label>
-            <div style="position: relative; display: flex; align-items: center;">
-                <input type="password" id="aiApiKeyInput" placeholder="AIzaSy..." style="width: 100%; padding-left: 40px; direction: ltr; text-align: left;">
-                <button onclick="toggleAIPassword()" id="aiToggleKeyBtn" style="position: absolute; left: 10px; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px;" title="إظهار المفتاح">👁️</button>
-            </div>
-        </div>
-        <div style="display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end;">
-            <button class="btn btn-secondary" onclick="closeAISettings()">إلغاء</button>
-            <button class="btn btn-primary" onclick="saveAISettings()">حفظ</button>
-        </div>
-    </div>
-</div>
 
 <!-- AI Logic Scripts -->
 <script>
