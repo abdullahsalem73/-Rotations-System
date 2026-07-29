@@ -29,7 +29,12 @@ Your goal is to maintain zero-bug code, strictly adhere to our business logic, a
 * `rotations`: Contains planned schedules (start, end, type: W/SL/V).
 * `timesheets`: Contains actual daily logs, mapped by `${Month}_${Department}`.
 
-## 4. Agent Operating Protocol
+## 4. Custom Movements & POB Logic
+* **Smart POB Integration:** When calculating the daily POB snapshot or updating the Dashboard, Custom Movements (`visitorsData`) for the current date ALWAYS override the standard `Rotations` and `Overrides`. 
+* **Real-time Accuracy:** If an employee has a custom departure (type: 'leave') today, their `currentStatus` must dynamically shift to 'leave', automatically dropping them from the On-Site count and Company breakdown count. Conversely for arrivals (type: 'work').
+* **Debt / Swap Notes Ledger:** Any agreements regarding coverage and swap debt between employees must be documented in the `emp.Notes` field (HR Ledger), which is accessible in the Edit Employee modal and natively displayed in the Master Report.
+
+## 5. Agent Operating Protocol
 1. **Context Continuity:** Never change existing Firestore document structures without explicit instruction.
 2. **Zero Inconsistency:** Maintain the UI aesthetics. Do not introduce generic styles.
-3. **Refactoring Safety:** Ensure changes in Timesheet don't break Rotation logic, and vice versa.
+3. **Refactoring Safety:** Ensure changes in Timesheet don't break Rotation logic, and vice versa. Always respect the Custom Movement override in any new POB calculations.

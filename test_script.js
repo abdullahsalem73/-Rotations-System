@@ -1562,6 +1562,8 @@
     function initCharts() {
         // Work vs Leave vs Missing
         let workCount = 0, leaveCount = 0, missingCount = 0, sickCount = 0;
+        let compOnCounts = {};
+        let totalOn = 0;
         
         const todayStr = formatDateRaw(new Date());
         const todayNum = parseDate(todayStr).getTime();
@@ -1596,7 +1598,13 @@
                 currentStatus = activeOverride.type;
             }
 
-            if (currentStatus === 'work' || currentStatus === 'standby_cover') workCount++;
+            if (currentStatus === 'work' || currentStatus === 'standby_cover') {
+                workCount++;
+                if (e.Company) {
+                    compOnCounts[e.Company] = (compOnCounts[e.Company] || 0) + 1;
+                    totalOn++;
+                }
+            }
             else if (currentStatus === 'leave' || currentStatus === 'rest') leaveCount++;
             else if (currentStatus === 'sick_leave') sickCount++;
             else missingCount++;
@@ -1653,26 +1661,6 @@
         });
 
         // Company Dist (ON-Duty Only - BOB format)
-        const todayTime = todayNum;
-        
-        let compOnCounts = {};
-        let totalOn = 0;
-        
-        employees.forEach(e => {
-            let isOn = false;
-            if (e.Rotations) {
-                e.Rotations.forEach(r => {
-                    const startNum = parseDate(r.start).getTime();
-                    const endNum = parseDate(r.end).getTime();
-                    if (todayTime >= startNum && todayTime <= endNum && r.type === 'work') {
-                        isOn = true;
-                    }
-                });
-            }
-            if (isOn && e.Company) {
-                compOnCounts[e.Company] = (compOnCounts[e.Company] || 0) + 1;
-                totalOn++;
-            }
         });
 
         const summaryContainer = document.getElementById('onDutySummary');
