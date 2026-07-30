@@ -152,7 +152,15 @@ h1 span {
     display: none;
     animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.tab-pane.active { display: block; }
+.tab-pane.active { 
+    display: block; 
+    animation: fadeSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeSlideUp {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
 @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
 /* Cards & Bento */
@@ -176,12 +184,20 @@ h1 span {
     opacity: 0;
     transition: opacity 0.3s ease;
 }
-.stat-card:hover {
-    transform: translateY(-5px);
-    border-color: rgba(255,255,255,0.15);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.4), 0 0 20px rgba(255, 123, 0, 0.1);
+.card:hover, .stat-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: rgba(0, 180, 216, 0.4);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.5), 0 0 30px rgba(0, 180, 216, 0.15);
 }
-.stat-card:hover::before { opacity: 1; }
+.card:hover::before, .stat-card:hover::before { opacity: 1; }
+
+@media (max-width: 768px) {
+    .card:active, .stat-card:active {
+        transform: scale(0.96);
+        box-shadow: 0 0 15px rgba(0, 180, 216, 0.3) inset;
+        transition: transform 0.1s;
+    }
+}
 
 .stats-grid {
     display: grid;
@@ -678,12 +694,34 @@ select.inline-input { max-width: 90px; cursor: pointer; }
     table:not(.timesheet-table) tbody td[data-label="Name"]::before {
         margin-right: 0;
     }
+    table:not(.timesheet-table) tbody tr {
+        position: relative;
+        overflow: hidden; 
+    }
     table:not(.timesheet-table) tbody td[data-label="Actions"] {
-        justify-content: flex-end;
-        gap: 10px;
+        position: absolute;
+        top: 0;
+        right: -130px;
+        width: 130px;
+        height: 100%;
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(10px);
+        display: flex;
+        flex-direction: row !important;
+        align-items: center;
+        justify-content: space-evenly;
+        transition: right 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border-radius: 0 16px 16px 0;
+        box-shadow: -5px 0 15px rgba(0,0,0,0.3);
+        z-index: 10;
+        padding: 0 !important;
+        border-bottom: none !important;
     }
     table:not(.timesheet-table) tbody td[data-label="Actions"]::before {
         display: none;
+    }
+    table:not(.timesheet-table) tbody tr.swiped td[data-label="Actions"] {
+        right: 0;
     }
     /* Modal Tweaks */
     .modal-content { width: 95%; padding: 20px 15px; margin-top: 5vh; border-radius: 16px; }
@@ -7566,7 +7604,59 @@ body.app-loaded #splash-screen {
                 window.blockOverlayListener = null;
             }
         }
-    };
+    };    // Swipe-to-Action Logic for Mobile
+    (function initSwipeToAction() {
+        let xDown = null;
+        let yDown = null;
+        let currentSwipedRow = null;
+
+        document.addEventListener('touchstart', function(evt) {
+            if (evt.touches.length > 1) return; // ignore multi-touch
+            xDown = evt.touches[0].clientX;
+            yDown = evt.touches[0].clientY;
+        }, {passive: true});
+
+        document.addEventListener('touchmove', function(evt) {
+            if (!xDown || !yDown) return;
+            let xUp = evt.touches[0].clientX;
+            let yUp = evt.touches[0].clientY;
+            let xDiff = xDown - xUp;
+            let yDiff = yDown - yUp;
+
+            if (Math.abs(xDiff) > Math.abs(yDiff) && Math.abs(xDiff) > 30) {
+                // Horizontal swipe detected
+                let tr = evt.target.closest('table:not(.timesheet-table) tbody tr');
+                if (tr && window.innerWidth <= 768) {
+                    // Check if it has actions
+                    if (tr.querySelector('td[data-label="Actions"]')) {
+                        if (xDiff > 0) { // Swiped left
+                            if(currentSwipedRow && currentSwipedRow !== tr) {
+                                currentSwipedRow.classList.remove('swiped');
+                            }
+                            tr.classList.add('swiped');
+                            currentSwipedRow = tr;
+                        } else { // Swiped right
+                            tr.classList.remove('swiped');
+                            if (currentSwipedRow === tr) currentSwipedRow = null;
+                        }
+                    }
+                }
+            }
+        }, {passive: true});
+
+        document.addEventListener('touchend', function(evt) {
+            xDown = null;
+            yDown = null;
+        });
+
+        // Close swiped row if tapped outside
+        document.addEventListener('click', function(evt) {
+            if (currentSwipedRow && !currentSwipedRow.contains(evt.target)) {
+                currentSwipedRow.classList.remove('swiped');
+                currentSwipedRow = null;
+            }
+        });
+    })();
 </script>
 
 </body>
