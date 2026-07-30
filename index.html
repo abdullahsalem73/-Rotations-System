@@ -1180,6 +1180,26 @@ body.app-loaded #splash-screen {
 }
 .ai-table th { background: rgba(255,255,255,0.1); }
 
+.employee-profile-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: nowrap;
+}
+.employee-profile-card .profile-info-col {
+    flex: 1;
+    min-width: 0; /* allows text truncation inside flex child */
+}
+.employee-profile-card #profileName {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+.employee-profile-card .actions-col {
+    margin-left: auto;
+}
+
 /* Mobile responsive */
 @media(max-width: 768px) {
     .ai-chat-panel {
@@ -1201,6 +1221,34 @@ body.app-loaded #splash-screen {
         max-width: none !important;
         box-shadow: 0 10px 40px rgba(0,0,0,0.8) !important;
         border-radius: 12px;
+    }
+    
+    .employee-profile-card {
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+    .employee-profile-card .profile-info-col {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .employee-profile-card #profileName {
+        font-size: 22px !important;
+        white-space: normal !important;
+        word-break: break-word;
+        text-align: center;
+    }
+    .employee-profile-card .employee-details-row {
+        justify-content: center !important;
+        text-align: center !important;
+    }
+    .employee-profile-card .actions-col {
+        margin-left: 0;
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
     }
 }
 </style>
@@ -1318,18 +1366,18 @@ body.app-loaded #splash-screen {
         <!-- Stats moved to profile card -->
 
         <!-- Employee Profile Card -->
-        <div class="card" style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin-bottom: 25px; border-left: 4px solid var(--primary);">
+        <div class="card employee-profile-card" style="margin-bottom: 25px; border-left: 4px solid var(--primary);">
             <div id="profilePicContainer" onclick="document.getElementById('profilePicInput').click()" style="cursor: pointer; background: rgba(255,255,255,0.05); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; border: 1px solid var(--glass-border); overflow: hidden; position: relative;" title="Click to upload profile picture">
                 <span id="profilePicFallback">🧑‍💼</span>
                 <img id="profilePicImg" src="" style="width: 100%; height: 100%; object-fit: cover; display: none; position: absolute; top: 0; left: 0;" />
             </div>
             <input type="file" id="profilePicInput" accept="image/*" style="display: none;" onchange="handleProfilePicUpload(event)">
-            <div style="flex: 1;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div class="profile-info-col">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
                     <h2 id="profileName" class="gradient-text" style="margin: 0 0 8px 0; font-size: 28px;">Employee Name</h2>
                     <button class="btn btn-outline" style="padding: 6px 12px; font-size: 13px; border-color: #8b5cf6; color: #8b5cf6;" onclick="openExceptionModal()">+ Add Exception (SL)</button>
                 </div>
-                <div style="display: flex; gap: 20px; font-size: 15px; color: var(--text-main); flex-wrap: wrap; margin-bottom: 15px; direction: ltr; text-align: left;">
+                <div class="employee-details-row" style="display: flex; gap: 20px; font-size: 15px; color: var(--text-main); flex-wrap: wrap; margin-bottom: 15px; direction: ltr; text-align: left;">
                     <span><strong style="color: var(--text-muted);">Employee ID:</strong> <span id="profileID" style="font-weight:600;">---</span></span>
                     <span><strong style="color: var(--text-muted);">Company:</strong> <span id="profileCompany" style="font-weight:600;">---</span></span>
                     <span><strong style="color: var(--text-muted);">Department:</strong> <span id="profileDept" style="font-weight:600;">---</span></span>
