@@ -1368,6 +1368,59 @@ body.app-loaded #splash-screen {
         flex-wrap: wrap;
     }
 }
+    .conflict-item {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transform: translateX(0);
+        cursor: grab;
+    }
+    .conflict-item:active { cursor: grabbing; }
+    .conflict-item.swiped-left { transform: translateX(-80px); }
+    .conflict-item.swiped-right { transform: translateX(80px); }
+    
+    .conflict-action-btn {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 10;
+        gap: 5px;
+    }
+    .conflict-action-btn i { font-size: 18px; }
+    .conflict-dismiss-btn {
+        right: -80px;
+        background: #ef4444;
+        transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .conflict-snooze-btn {
+        left: -80px;
+        background: #f59e0b;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .conflict-item.swiped-left .conflict-dismiss-btn { right: 0; }
+    .conflict-item.swiped-right .conflict-snooze-btn { left: 0; }
+    
+    /* Desktop Hover Support */
+    @media (hover: hover) {
+        .conflict-item:hover .conflict-dismiss-btn { right: 0; }
+        .conflict-item:hover .conflict-snooze-btn { left: 0; }
+        .conflict-item:hover { padding-right: 80px; padding-left: 80px; }
+    }
+
+    @keyframes fadeOutCollapse {
+        0% { opacity: 1; transform: scale(1); max-height: 100px; padding: 10px; margin-bottom: 10px; }
+        50% { opacity: 0; transform: scale(0.9); max-height: 100px; padding: 10px; margin-bottom: 10px; }
+        100% { opacity: 0; transform: scale(0.8); max-height: 0; padding: 0; margin-bottom: 0; border: none; }
+    }
 </style>
 <div id="splash-screen">
     <div class="splash-ripple"></div>
@@ -1457,6 +1510,9 @@ body.app-loaded #splash-screen {
                             <div style="display: flex; gap: 15px; align-items: center;">
                                 <span style="font-size: 12px; color: #10b981; cursor: pointer; display: flex; align-items: center; gap: 4px;" onclick="detectConflicts()">
                                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Refresh
+                                </span>
+                                <span style="font-size: 12px; color: #f59e0b; cursor: pointer; display: flex; align-items: center; gap: 4px;" onclick="dismissAllConflicts()">
+                                    <i class="fas fa-check-double"></i> Dismiss All
                                 </span>
                                 <span style="font-size: 12px; color: #ef4444; cursor: pointer; display: flex; align-items: center; gap: 4px;" onclick="toggleNotifications()">
                                     <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg> Close
@@ -5040,6 +5096,20 @@ body.app-loaded #splash-screen {
         
         // Delegate logic to DataAgent
         let conflicts = window.DataAgent ? window.DataAgent.detectConflicts(employees, 30) : [];
+        
+        // Load persistence
+        const dismissed = JSON.parse(localStorage.getItem('dismissed_conflicts') || '[]');
+        const snoozed = JSON.parse(localStorage.getItem('snoozed_conflicts') || '{}');
+        const now = Date.now();
+        
+        // Filter out dismissed and active snoozed
+        conflicts = conflicts.filter(c => {
+            const id = btoa(unescape(encodeURIComponent(c.dateStr + '_' + c.msg))); // Unique ID hash
+            c.hashId = id;
+            if (dismissed.includes(id)) return false;
+            if (snoozed[id] && now < snoozed[id]) return false;
+            return true;
+        });
 
         if (conflicts.length === 0) {
             notifList.innerHTML = '<div style="text-align: center; color: var(--text-muted); font-size: 14px;">No conflicts detected in the next 30 days. You\'re all good! 🎉</div>';
@@ -5055,14 +5125,57 @@ body.app-loaded #splash-screen {
                 let bg = c.type === 'overlap' ? 'rgba(245, 158, 11, 0.1)' : 'rgba(239, 68, 68, 0.1)';
                 
                 notifList.innerHTML += `
-                    <div class="conflict-item" style="background: ${bg}; border-left: 4px solid ${border}; padding: 10px; border-radius: 4px; font-size: 13px;">
+                    <div class="conflict-item" id="conflict_${c.hashId}" style="background: ${bg}; border-left: 4px solid ${border}; padding: 10px; border-radius: 4px; font-size: 13px;">
+                        <div class="conflict-action-btn conflict-snooze-btn" onclick="handleConflictAction('${c.hashId}', 'snooze')">
+                            <i class="fas fa-clock"></i> Snooze
+                        </div>
                         <div style="font-weight: bold; margin-bottom: 5px; color: #fff;">${icon} ${c.dateStr}</div>
                         <div style="color: rgba(255,255,255,0.8);">${c.msg}</div>
+                        <div class="conflict-action-btn conflict-dismiss-btn" onclick="handleConflictAction('${c.hashId}', 'dismiss')">
+                            <i class="fas fa-times"></i> Dismiss
+                        </div>
                     </div>
                 `;
             });
         }
     }
+
+    function handleConflictAction(hashId, action) {
+        const item = document.getElementById('conflict_' + hashId);
+        if (item) {
+            item.style.animation = 'fadeOutCollapse 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+            setTimeout(() => {
+                if(action === 'dismiss') {
+                    const dismissed = JSON.parse(localStorage.getItem('dismissed_conflicts') || '[]');
+                    if (!dismissed.includes(hashId)) { dismissed.push(hashId); localStorage.setItem('dismissed_conflicts', JSON.stringify(dismissed)); }
+                } else if (action === 'snooze') {
+                    const snoozed = JSON.parse(localStorage.getItem('snoozed_conflicts') || '{}');
+                    snoozed[hashId] = Date.now() + (24 * 60 * 60 * 1000); // 24 hours
+                    localStorage.setItem('snoozed_conflicts', JSON.stringify(snoozed));
+                }
+                detectConflicts(); // Refresh list to update badge and UI
+            }, 380);
+        }
+    }
+
+    window.dismissAllConflicts = function() {
+        const items = document.querySelectorAll('.conflict-item');
+        if (items.length === 0) return;
+        
+        let dismissed = JSON.parse(localStorage.getItem('dismissed_conflicts') || '[]');
+        items.forEach((item, index) => {
+            const hashId = item.id.replace('conflict_', '');
+            if (!dismissed.includes(hashId)) dismissed.push(hashId);
+            setTimeout(() => {
+                item.style.animation = 'fadeOutCollapse 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+            }, index * 50); // Staggered animation
+        });
+        localStorage.setItem('dismissed_conflicts', JSON.stringify(dismissed));
+        
+        setTimeout(() => {
+            detectConflicts();
+        }, (items.length * 50) + 400);
+    };
 
     function filterConflicts(query) {
         query = query.toLowerCase();
@@ -7624,6 +7737,7 @@ body.app-loaded #splash-screen {
         let xDown = null;
         let yDown = null;
         let currentSwipedRow = null;
+        let currentSwipedConflict = null;
 
         document.addEventListener('touchstart', function(evt) {
             if (evt.touches.length > 1) return; // ignore multi-touch
@@ -7641,19 +7755,36 @@ body.app-loaded #splash-screen {
             if (Math.abs(xDiff) > Math.abs(yDiff) && Math.abs(xDiff) > 30) {
                 // Horizontal swipe detected
                 let tr = evt.target.closest('table:not(.timesheet-table) tbody tr');
+                let conflictItem = evt.target.closest('.conflict-item');
+                
                 if (tr && window.innerWidth <= 768) {
-                    // Check if it has actions
                     if (tr.querySelector('td[data-label="Actions"]')) {
                         if (xDiff > 0) { // Swiped left
-                            if(currentSwipedRow && currentSwipedRow !== tr) {
-                                currentSwipedRow.classList.remove('swiped');
-                            }
+                            if(currentSwipedRow && currentSwipedRow !== tr) currentSwipedRow.classList.remove('swiped');
                             tr.classList.add('swiped');
                             currentSwipedRow = tr;
                         } else { // Swiped right
                             tr.classList.remove('swiped');
                             if (currentSwipedRow === tr) currentSwipedRow = null;
                         }
+                    }
+                } else if (conflictItem) {
+                    if (xDiff > 0) { // Swiped left
+                        if (currentSwipedConflict && currentSwipedConflict !== conflictItem) {
+                            currentSwipedConflict.classList.remove('swiped-left');
+                            currentSwipedConflict.classList.remove('swiped-right');
+                        }
+                        conflictItem.classList.remove('swiped-right');
+                        conflictItem.classList.add('swiped-left');
+                        currentSwipedConflict = conflictItem;
+                    } else { // Swiped right
+                        if (currentSwipedConflict && currentSwipedConflict !== conflictItem) {
+                            currentSwipedConflict.classList.remove('swiped-left');
+                            currentSwipedConflict.classList.remove('swiped-right');
+                        }
+                        conflictItem.classList.remove('swiped-left');
+                        conflictItem.classList.add('swiped-right');
+                        currentSwipedConflict = conflictItem;
                     }
                 }
             }
@@ -7664,11 +7795,16 @@ body.app-loaded #splash-screen {
             yDown = null;
         });
 
-        // Close swiped row if tapped outside
+        // Close swiped items if tapped outside
         document.addEventListener('click', function(evt) {
             if (currentSwipedRow && !currentSwipedRow.contains(evt.target)) {
                 currentSwipedRow.classList.remove('swiped');
                 currentSwipedRow = null;
+            }
+            if (currentSwipedConflict && !currentSwipedConflict.contains(evt.target)) {
+                currentSwipedConflict.classList.remove('swiped-left');
+                currentSwipedConflict.classList.remove('swiped-right');
+                currentSwipedConflict = null;
             }
         });
     })();
