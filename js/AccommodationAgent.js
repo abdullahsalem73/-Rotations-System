@@ -121,7 +121,7 @@ window.AccommodationAgent = {
             let ownedRoom = this.getEmployeeOwnedRoom(emp.ID);
             if (ownedRoom && ownedRoom.status !== 'Maintenance') {
                 if (ownedRoom.occupants.length < ownedRoom.beds) {
-                    ownedRoom.occupants.push(emp);
+                    ownedRoom.occupants.push({ ID: String(emp.ID), Name: emp.Name, Company: emp.Company || '', Department: emp.Department || '' });
                     ownedRoom.status = 'Occupied';
                     ownedRoom.history.push({ date: new Date().toISOString(), action: 'Auto-Checked In', by: 'System' });
                     assigned = true;
@@ -132,7 +132,7 @@ window.AccommodationAgent = {
             if (!assigned && (!emp.B2B_Alternate)) {
                 let availableSingle = this.rooms.find(r => r.type === 'single' && (r.status === 'Available' || r.status === 'NeedsCleaning'));
                 if (availableSingle) {
-                    availableSingle.occupants.push(emp);
+                    availableSingle.occupants.push({ ID: String(emp.ID), Name: emp.Name, Company: emp.Company || '', Department: emp.Department || '' });
                     availableSingle.status = 'Occupied';
                     availableSingle.history.push({ date: new Date().toISOString(), action: 'Auto-Checked In', by: 'System' });
                     assigned = true;
@@ -143,7 +143,7 @@ window.AccommodationAgent = {
             if (!assigned) {
                 let availableShared = this.rooms.find(r => r.type === 'shared' && r.occupants.length < r.beds && r.status !== 'Maintenance');
                 if (availableShared) {
-                    availableShared.occupants.push(emp);
+                    availableShared.occupants.push({ ID: String(emp.ID), Name: emp.Name, Company: emp.Company || '', Department: emp.Department || '' });
                     availableShared.history.push({ date: new Date().toISOString(), action: 'Auto-Checked In', by: 'System' });
                     if (availableShared.occupants.length >= availableShared.beds) {
                         availableShared.status = 'Occupied';
@@ -212,7 +212,7 @@ window.AccommodationAgent = {
         const targetRoom = this.rooms.find(r => r.id === roomId);
         if (targetRoom && targetRoom.status !== 'Maintenance') {
             if (targetRoom.occupants.length < targetRoom.beds) {
-                targetRoom.occupants.push(emp);
+                targetRoom.occupants.push({ ID: String(emp.ID), Name: emp.Name, Company: emp.Company || '', Department: emp.Department || '' });
                 targetRoom.status = 'Occupied';
                 targetRoom.history.push({ date: new Date().toISOString(), action: 'Manual Check-in', by: 'Admin' });
                 this.saveRooms();
@@ -305,13 +305,23 @@ window.AccommodationAgent = {
     /**
      * Loads the rooms data from Firebase/LocalStorage
      */
-    loadRooms: function() {
+    loadRooms: function(retryCount = 0) {
         try {
             const stored = localStorage.getItem('hr_accommodation_rooms');
             if (stored) {
                 this.rooms = JSON.parse(stored);
             }
             
+            // If db is not defined yet, retry after 500ms (up to 10 times)
+            if (typeof db === 'undefined' || !db.collection) {
+                if (retryCount < 10) {
+                    setTimeout(() => {
+                        this.loadRooms(retryCount + 1);
+                    }, 500);
+                    return; // exit current attempt
+                }
+            }
+
             if (typeof db !== 'undefined' && db.collection) {
                 db.collection("system").doc("accommodation_rooms").get().then(doc => {
                     if (doc.exists && doc.data().rooms) {
