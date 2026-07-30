@@ -4705,10 +4705,10 @@ body.app-loaded #splash-screen {
                 if (s.isDeparture) actionBadge = ' <span class="badge" style="background: rgba(239,68,68,0.2); color:#ef4444; border:none; padding:2px 8px;">➖ Departed</span>';
                 
                 staffBody.innerHTML += `<tr style="${rowStyle}">
-                    <td style="text-align:center; width:80px;">${s.id || '-'}</td>
-                    <td style="text-align:left;">${s.name || '-'}${actionBadge}</td>
-                    <td style="text-align:left;"><span class="company-badge">${s.company || '-'}</span></td>
-                    <td style="text-align:left;">${s.dept || '-'}</td>
+                    <td data-label="ID" style="text-align:center; width:80px;">${s.id || '-'}</td>
+                    <td data-label="Name" style="text-align:left; direction: ltr;">${s.name || '-'}${actionBadge}</td>
+                    <td data-label="Company" style="text-align:left; direction: ltr;"><span class="company-badge">${s.company || '-'}</span></td>
+                    <td data-label="Department" style="text-align:left; direction: ltr;">${s.dept || '-'}</td>
                 </tr>`;
             });
         } else {
