@@ -1421,6 +1421,25 @@ body.app-loaded #splash-screen {
         50% { opacity: 0; transform: scale(0.9); max-height: 100px; padding: 10px; margin-bottom: 10px; }
         100% { opacity: 0; transform: scale(0.8); max-height: 0; padding: 0; margin-bottom: 0; border: none; }
     }
+    @keyframes fillBar {
+        from { width: 0%; opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(249, 115, 22, 0.3);
+        border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(249, 115, 22, 0.6);
+    }
 </style>
 <div id="splash-screen">
     <div class="splash-ripple"></div>
@@ -1672,15 +1691,31 @@ body.app-loaded #splash-screen {
 
         <!-- 1. Interactive Charts -->
         <div class="stats-grid charts-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 25px;">
-            <div class="card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px;">
-                <h3 class="gradient-text" style="margin-top:0;">📊 Work vs Leave Status</h3>
-                <div style="position: relative; width: 100%; height: 220px; display: flex; justify-content: center;">
+            <div class="card chart-card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 320px; position: relative; overflow: hidden; border-top: 2px solid rgba(16, 185, 129, 0.3);">
+                <!-- Ambient Glow -->
+                <div style="position: absolute; width: 200px; height: 200px; background: rgba(16, 185, 129, 0.1); filter: blur(50px); top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none;"></div>
+                
+                <h3 class="gradient-text" style="margin-top:0; z-index: 1;">📊 Work vs Leave Status</h3>
+                <div style="position: relative; width: 100%; height: 220px; display: flex; justify-content: center; align-items: center; z-index: 1;">
                     <canvas id="statusChart"></canvas>
+                    <!-- Center Badge for Doughnut Chart -->
+                    <div id="chartCenterBadge" style="position: absolute; pointer-events: none; display: flex; flex-direction: column; align-items: center; justify-content: center; top: 60%; transform: translateY(-50%);">
+                        <span style="font-size: 32px; font-weight: 900; color: #fff; line-height: 1; text-shadow: 0 0 15px rgba(16, 185, 129, 0.8);" id="centerTotalValue">0</span>
+                        <span style="font-size: 11px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;">Total Staff</span>
+                    </div>
                 </div>
             </div>
-            <div class="card" style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 300px;">
-                <h3 class="gradient-text" style="margin-top:0;">💼 ON-Duty by Company (POB) <span id="pobTotalBadge" style="color:#f97316; margin-left:8px;"></span></h3>
-                <div id="onDutySummary" style="width: 100%; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; align-items: center; padding: 10px; overflow-y: auto;">
+            
+            <div class="card chart-card" style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: 320px; padding: 20px 15px; border-top: 2px solid rgba(249, 115, 22, 0.3); position: relative;">
+                <!-- Ambient Glow -->
+                <div style="position: absolute; width: 200px; height: 200px; background: rgba(249, 115, 22, 0.08); filter: blur(50px); top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none;"></div>
+                
+                <h3 class="gradient-text" style="margin-top:0; z-index: 1; width: 100%; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; margin-bottom: 10px;">
+                    💼 ON-Duty by Company <span id="pobTotalBadge" style="color:#fff; background: rgba(249, 115, 22, 0.2); border: 1px solid #f97316; padding: 2px 8px; border-radius: 12px; font-size: 14px; margin-left:8px; box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);"></span>
+                </h3>
+                
+                <!-- Custom Scrollbar Container -->
+                <div id="onDutySummary" class="custom-scrollbar" style="width: 100%; height: calc(100% - 40px); overflow-y: auto; padding-right: 5px; z-index: 1;">
                     <!-- Populated dynamically -->
                 </div>
             </div>
@@ -3944,9 +3979,11 @@ body.app-loaded #splash-screen {
             options: { 
                 responsive: true, 
                 maintainAspectRatio: false, 
+                cutout: '75%', // Make donut thinner for center badge
                 plugins: { 
                     legend: { 
-                        labels: { color: 'white' },
+                        position: 'top',
+                        labels: { color: 'white', usePointStyle: true, padding: 15, font: { family: "'Inter', sans-serif", size: 11 } },
                         onClick: (e, legendItem, legend) => {
                             // Don't toggle visibility, just filter
                             handleChartClick(legendItem.index);
@@ -3965,9 +4002,13 @@ body.app-loaded #splash-screen {
         // Company Dist (ON-Duty Only - BOB format)
         // (compOnCounts and totalOn are now calculated in the main loop above to ensure they respect Overrides)
 
+        // Update center badge total
+        const centerBadge = document.getElementById('centerTotalValue');
+        if (centerBadge) centerBadge.innerText = totalOn;
+
         const summaryContainer = document.getElementById('onDutySummary');
         if (summaryContainer) {
-            let html = '<div style="width: 100%; display: flex; flex-direction: column; gap: 12px; padding: 0 10px;">';
+            let html = '<div style="width: 100%; display: flex; flex-direction: column; gap: 12px; padding: 0 5px;">';
             
             // Update the title badge
             const badge = document.getElementById('pobTotalBadge');
@@ -3982,21 +4023,24 @@ body.app-loaded #splash-screen {
             for (const [company, count] of sortedCompanies) {
                 const widthPercent = (count / maxCount) * 100;
                 html += `
-                    <div style="display: flex; align-items: center; width: 100%;">
-                        <div style="width: 110px; text-align: left; padding-right: 10px; font-size: 13px; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${company}">
-                            ${company}
+                    <div class="company-bar-row" style="display: flex; align-items: center; width: 100%; padding: 8px 12px; border-radius: 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: default;" onmouseover="this.style.background='rgba(255,255,255,0.08)'; this.style.transform='scale(1.02) translateX(5px)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.transform='scale(1) translateX(0)';">
+                        <div style="width: 110px; text-align: left; padding-right: 10px; font-size: 12px; font-weight: 600; color: #cbd5e1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-shadow: 0 0 5px rgba(255,255,255,0.1);" title="${company}">
+                            <i class="fas fa-building" style="color: #f97316; margin-right: 5px; opacity: 0.8;"></i> ${company}
                         </div>
-                        <div style="flex-grow: 1; background: rgba(255,255,255,0.05); height: 14px; border-radius: 7px; overflow: hidden;">
-                            <div style="width: ${widthPercent}%; background: linear-gradient(90deg, #f97316, #fb923c); height: 100%; border-radius: 7px; transition: width 0.5s ease-in-out;"></div>
+                        <div style="flex-grow: 1; background: rgba(0,0,0,0.3); height: 12px; border-radius: 6px; overflow: hidden; position: relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
+                            <div style="width: ${widthPercent}%; background: linear-gradient(90deg, #ea580c, #f97316, #fb923c); height: 100%; border-radius: 6px; box-shadow: 0 0 10px rgba(249, 115, 22, 0.5); animation: fillBar 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; position: relative;">
+                                <!-- Glowing tip -->
+                                <div style="position: absolute; right: 0; top: 0; bottom: 0; width: 15px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8)); filter: blur(2px);"></div>
+                            </div>
                         </div>
-                        <div style="width: 40px; text-align: right; padding-left: 10px; font-weight: bold; font-size: 15px; color: #f97316;">
+                        <div style="width: 40px; text-align: right; padding-left: 10px; font-weight: 900; font-size: 16px; color: #fff; text-shadow: 0 0 10px rgba(249, 115, 22, 0.8);">
                             ${count}
                         </div>
                     </div>`;
             }
             html += '</div>';
                 
-            summaryContainer.innerHTML = html || '<div style="color: #64748b; text-align:center;">No employees currently ON duty</div>';
+            summaryContainer.innerHTML = html || '<div style="color: #64748b; text-align:center; margin-top: 20px;">No employees currently ON duty</div>';
         }
     }
 
