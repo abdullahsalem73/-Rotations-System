@@ -283,12 +283,39 @@ td {
 }
 td:first-child { border-left: 1px solid var(--glass-border); border-top-left-radius: 16px; border-bottom-left-radius: 16px; }
 td:last-child { border-right: 1px solid var(--glass-border); border-top-right-radius: 16px; border-bottom-right-radius: 16px; }
-tbody tr { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease; }
-tbody tr:hover td {
-    background: rgba(255, 255, 255, 0.05); /* Slight highlight */
+tbody tr { 
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+    position: relative;
+}
+tbody tr td {
+    position: relative;
+    z-index: 1;
+}
+tbody tr::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border-radius: 16px;
+    background: linear-gradient(90deg, rgba(0, 180, 216, 0.2), rgba(255, 123, 0, 0.15));
+    opacity: 0;
+    z-index: 2;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+}
+tbody tr:hover::after {
+    opacity: 1;
 }
 tbody tr:hover {
-    transform: scale(1.005);
+    transform: scale(1.015) translateY(-2px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.25);
+    z-index: 10;
+}
+tbody tr:hover td {
+    border-color: rgba(0, 180, 216, 0.4);
+    color: var(--text-main) !important;
+}
+tbody tr:hover td:first-child {
+    box-shadow: inset 5px 0 0 var(--secondary);
 }
 
 /* Badges */
