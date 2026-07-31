@@ -35,22 +35,22 @@
 }
 
 :root.light-mode {
-    color-scheme: dark;
-    /* Glassy Dark Theme (Day Mode) */
-    --bg-base: #161B22;
-    --glass-bg: rgba(33, 38, 45, 0.6);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    color-scheme: light;
+    /* Clean Light Theme (Day Mode) */
+    --bg-base: #f8fafc;
+    --glass-bg: rgba(255, 255, 255, 0.95);
+    --glass-border: rgba(0, 0, 0, 0.08);
+    --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.05);
     
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
 }
 
 body.light-mode {
-    color-scheme: dark;
+    color-scheme: light;
     background-image: 
-        radial-gradient(circle at 15% 50%, rgba(255, 123, 0, 0.12), transparent 30%),
-        radial-gradient(circle at 85% 30%, rgba(0, 180, 216, 0.12), transparent 30%);
+        radial-gradient(circle at 15% 50%, rgba(255, 123, 0, 0.05), transparent 30%),
+        radial-gradient(circle at 85% 30%, rgba(0, 180, 216, 0.05), transparent 30%);
 }
 
 * { box-sizing: border-box; font-family: 'Inter', 'Cairo', sans-serif; }
@@ -118,14 +118,12 @@ h1 span {
 /* Tabs Navigation */
 .tabs-nav {
     display: inline-flex;
-    background: rgba(33, 38, 45,0.6);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: var(--bg-base);
     border-radius: 100px;
     padding: 6px;
     border: 1px solid var(--glass-border);
     margin-bottom: 30px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 .tab-btn {
     padding: 10px 24px;
