@@ -705,9 +705,6 @@ select.inline-input { max-width: 90px; cursor: pointer; }
     .action-buttons > div { width: 100%; display: flex; flex-direction: column; gap: 10px; }
     #searchInput { width: 100% !important; }
     
-    /* Hide normal add employee button on mobile */
-    #desktopAddBtn { display: none !important; }
-    
     /* Table to Cards Magic */
     table:not(.timesheet-table) { border: none !important; display: block; }
     table:not(.timesheet-table) thead { display: none; }
@@ -1826,7 +1823,7 @@ body.app-loaded #splash-screen {
                 <button class="magic-pill-btn import-btn" onclick="document.getElementById('csvFileInput').click()" title="Bulk Import CSV">
                     <i class="fas fa-file-csv"></i> <span class="pill-text">Import</span>
                 </button>
-                <button class="magic-pill-btn pdf-btn" onclick="openMasterReportModal()" title="Export PDF / Master Report">
+                <button class="magic-pill-btn pdf-btn" onclick="directExportPDF()" title="Export PDF / Master Report">
                     <i class="fas fa-file-pdf"></i> <span class="pill-text">PDF Report</span>
                 </button>
             </div>
@@ -5862,6 +5859,78 @@ body.app-loaded #splash-screen {
                 </body>
             </html>
         `);
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+            printWindow.print();
+            printWindow.close();
+        }, 250);
+    }
+
+    function directExportPDF() {
+        let html = `
+            <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th style="border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;">#</th>
+                        <th style="border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;">ID</th>
+                        <th style="border: 1px solid #ccc; padding: 8px; text-align: left; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;">Name</th>
+                        <th style="border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;">Company</th>
+                        <th style="border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;">Destination</th>
+                        <th style="border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;">Phone</th>
+                        <th style="border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;">Total Work</th>
+                        <th style="border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;">Total Leave</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+        
+        let displayList = filteredEmployees.map(e => {
+            let totalWork = 0, totalLeave = 0;
+            if (e.Rotations) {
+                e.Rotations.forEach(r => {
+                    const days = Math.floor((parseDate(r.end).getTime() - parseDate(r.start).getTime()) / (1000 * 3600 * 24)) + 1;
+                    if (r.type === 'work' || r.type === 'standby_cover') totalWork += days;
+                    if (r.type === 'leave' || r.type === 'rest') totalLeave += days;
+                });
+            }
+            return { ...e, computedWork: totalWork, computedLeave: totalLeave };
+        });
+
+        displayList.forEach((e, idx) => {
+            html += \`<tr>
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: center; color: black;">\${idx + 1}</td>
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: center; font-weight: bold; color: black;">\${e.ID || '-'}</td>
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: left; color: black;">
+                    <div style="font-weight: 500;">\${e.Name || '-'}</div>
+                </td>
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: center; color: black;">\${e.Company || '-'}</td>
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: center; color: black;">\${e.Destination || '-'}</td>
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: center; color: black;">\${e.Phone || '-'}</td>
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: center; color: black;">\${e.computedWork} days</td>
+                <td style="border: 1px solid #ccc; padding: 8px; text-align: center; color: black;">\${e.computedLeave} days</td>
+            </tr>\`;
+        });
+        html += \`</tbody></table>\`;
+
+        const printWindow = window.open('', '', 'width=1000,height=700');
+        printWindow.document.write(\`
+            <html>
+                <head>
+                    <title>Export PDF - Master Report</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; color: #000; background: #fff; }
+                        h2 { text-align: center; color: #000; margin-bottom: 5px; }
+                        .date-info { text-align: center; font-style: italic; color: #666; margin-bottom: 20px; }
+                    </style>
+                </head>
+                <body>
+                    <h2>👥 Employees Directory Master Report</h2>
+                    <div class="date-info">Generated on: \${new Date().toLocaleDateString()}</div>
+                    \${html}
+                </body>
+            </html>
+        \`);
         printWindow.document.close();
         printWindow.focus();
         setTimeout(() => {
