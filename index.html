@@ -1014,6 +1014,562 @@ select.inline-input { max-width: 90px; cursor: pointer; }
             </style>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+
+<script>
+// MAGIC MAP LISTENER
+document.addEventListener('click', function(e) {
+    if (e.target && e.target.innerText && e.target.innerText.includes('Live Map')) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        let modal = document.getElementById('globalMapModal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'globalMapModal';
+            modal.className = 'modal';
+            modal.style.cssText = 'z-index: 10000; padding: 20px; display: none;';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 90%; height: 85vh; display: flex; flex-direction: column; background: var(--card-bg);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 class="gradient-text" style="margin: 0;">🗺️ Live Camp Grid</h2>
+                        <div style="display: flex; gap: 15px; font-size: 14px; font-weight: bold;">
+                            <span style="color: #10b981; text-shadow: 0 0 5px rgba(16,185,129,0.5);">● Empty</span>
+                            <span style="color: #f59e0b; text-shadow: 0 0 5px rgba(245,158,11,0.5);">● Partial</span>
+                            <span style="color: #ef4444; text-shadow: 0 0 5px rgba(239,68,68,0.5);">● Full</span>
+                        </div>
+                        <button class="close-btn" onclick="document.getElementById('globalMapModal').style.display='none'" style="font-size: 24px;">&times;</button>
+                    </div>
+                    <div id="globalCampGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 12px; flex-grow: 1; overflow-y: auto; padding-right: 10px; padding-bottom: 20px;">
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        modal.style.display = 'block';
+        
+        const grid = document.getElementById('globalCampGrid');
+        grid.innerHTML = '';
+        if(!window.AccommodationAgent || !window.AccommodationAgent.rooms) return;
+        const sortedRooms = [...window.AccommodationAgent.rooms].sort((a,b) => a.id.localeCompare(b.id, undefined, {numeric:true}));
+        
+        sortedRooms.forEach(room => {
+            const occCount = (room.occupants || []).length;
+            let bgColor = 'rgba(16, 185, 129, 0.1)';
+            let borderColor = '#10b981';
+            
+            if (room.status === 'occupied' || occCount >= room.beds) {
+                bgColor = 'rgba(239, 68, 68, 0.15)';
+                borderColor = '#ef4444';
+            } else if (occCount > 0 && occCount < room.beds) {
+                bgColor = 'rgba(245, 158, 11, 0.15)';
+                borderColor = '#f59e0b';
+            }
+            
+            if (room.status === 'maintenance') {
+                bgColor = 'rgba(107, 114, 128, 0.2)';
+                borderColor = '#6b7280';
+            }
+            
+            const cell = document.createElement('div');
+            cell.style.cssText = `
+                background: ${bgColor}; 
+                border: 2px solid ${borderColor}; 
+                border-radius: 8px; 
+                padding: 15px 5px; 
+                text-align: center; 
+                cursor: pointer; 
+                transition: all 0.3s ease;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            `;
+            
+            cell.onmouseover = () => {
+                cell.style.transform = 'translateY(-3px)';
+                cell.style.boxShadow = `0 6px 12px ${borderColor}40`;
+            };
+            cell.onmouseout = () => {
+                cell.style.transform = 'translateY(0)';
+                cell.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+            };
+            
+            cell.onclick = () => {
+                document.getElementById('globalMapModal').style.display = 'none';
+                if(typeof openRoomManagementModal === 'function') openRoomManagementModal(room.id);
+            };
+            
+            cell.innerHTML = `
+                <div style="font-weight: 900; font-size: 16px; color: white; margin-bottom: 5px;">${room.id}</div>
+                <div style="font-size: 12px; color: var(--text-muted); background: rgba(0,0,0,0.2); padding: 2px 6px; border-radius: 4px;">${occCount} / ${room.beds}</div>
+            `;
+            
+            grid.appendChild(cell);
+        });
+    }
+});
+</script>
+
+<!-- HR MAGIC OVERHAUL INJECTED -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+.magic-btn { padding: 6px 12px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; font-size: 13px; transition: all 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.magic-btn-primary { background: #3b82f6; color: white; }
+.magic-btn-primary:hover { background: #2563eb; transform: translateY(-1px); }
+.magic-btn-success { background: #10b981; color: white; }
+.magic-btn-success:hover { background: #059669; transform: translateY(-1px); }
+.magic-btn-warning { background: #f59e0b; color: white; }
+.magic-btn-warning:hover { background: #d97706; transform: translateY(-1px); }
+.log-entry { padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 13px; display: flex; align-items: center; gap: 10px; }
+.log-time { color: #9ca3af; font-family: monospace; font-size: 11px; min-width: 150px; }
+.log-action { color: #60a5fa; font-weight: bold; min-width: 120px; }
+.log-details { color: #e5e7eb; }
+/* =========================================
+   📱 COMPREHENSIVE MOBILE RESPONSIVENESS & CRAZY PROFESSIONAL UI
+   ========================================= */
+@media (max-width: 768px) {
+    /* Base Layout */
+    body { padding: 10px 8px; }
+    .container { padding: 0 !important; }
+    
+    /* Header Section */
+    .header-section {
+        flex-direction: column;
+        align-items: center !important;
+        text-align: center;
+        gap: 15px;
+    }
+    .header-section > div { flex-direction: column; text-align: center; }
+    .header-section h1 { font-size: 22px !important; text-align: center; align-items: center; }
+    
+    /* Search & Control Row */
+    .controls-row, .search-magic-bar {
+        flex-direction: column !important;
+        gap: 10px !important;
+        border-radius: 20px !important;
+        padding: 15px !important;
+    }
+    .search-magic-bar .action-pills {
+        border-left: none !important;
+        padding-left: 0 !important;
+        margin-left: 0 !important;
+        width: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    .search-wrapper { width: 100% !important; min-width: 100% !important; }
+    .controls-row select, .controls-row button {
+        width: 100% !important;
+        flex: none !important;
+    }
+    
+    /* Profile Header & Action Bar */
+    .profile-info-col > div:first-child {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center;
+    }
+    .profile-info-col h2 { font-size: 22px !important; text-align: center; }
+    
+    /* Ensure the action buttons wrap and expand on mobile */
+    .action-bar-container {
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: center;
+        border-radius: 16px !important;
+    }
+    .action-bar-container button {
+        flex: 1;
+        min-width: 100px;
+        justify-content: center;
+    }
+
+    /* KPI Cards grid - Mobile 2x2 */
+    .kpi-cards-container {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 10px !important;
+    }
+    .kpi-cards-container > div {
+        min-width: 0 !important;
+        padding: 12px 10px !important;
+    }
+    
+    /* Main Tables */
+    .table-container, .card > div[style*="overflow-x: auto"] {
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+    .table th, .table td {
+        padding: 10px 8px !important;
+        font-size: 12px !important;
+        white-space: nowrap; /* Prevent wrapping in cells to keep table readable */
+    }
+    
+    /* Sticky First Column for horizontal scrolling */
+    .table th:first-child, .table td:first-child {
+        position: sticky;
+        left: 0;
+        z-index: 2;
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(10px);
+        box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+    }
+
+    /* Modals - Full Screen */
+    .modal-content {
+        width: 95% !important;
+        max-width: none !important;
+        max-height: 90vh !important;
+        margin: 5vh auto !important;
+        padding: 20px 15px !important;
+        border-radius: 20px !important;
+        overflow-y: auto;
+    }
+    .modal-content h3 { font-size: 18px !important; }
+
+    /* AI Chat Panel */
+    .ai-fab {
+        bottom: 20px;
+        left: 20px;
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+    }
+    .ai-chat-panel {
+        width: calc(100% - 40px);
+        left: 20px;
+        bottom: 80px;
+        height: 450px;
+    }
+    
+    /* Profile Details Row */
+    .employee-details-row {
+        flex-direction: column;
+        gap: 8px !important;
+        align-items: flex-start;
+        background: rgba(255,255,255,0.02);
+        padding: 15px;
+        border-radius: 12px;
+    }
+}
+
+/* =========================================
+   CRAZY PROFESSIONAL GLASSMORPHISM EFFECTS
+   ========================================= */
+.glass-panel {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.08);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.glass-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px 0 rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255,255,255,0.15);
+}
+
+.table tbody tr {
+    transition: background-color 0.2s ease, transform 0.2s ease;
+}
+.table tbody tr:hover {
+    background-color: rgba(255, 255, 255, 0.04) !important;
+    transform: scale(1.002);
+    box-shadow: inset 0 0 10px rgba(0, 180, 216, 0.1);
+}
+
+.magic-btn-glow {
+    position: relative;
+    overflow: hidden;
+}
+.magic-btn-glow::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0) 100%);
+    transform: rotate(45deg);
+    animation: magicGlow 3s infinite linear;
+}
+@keyframes magicGlow {
+    0% { transform: rotate(45deg) translateX(-100%); }
+    100% { transform: rotate(45deg) translateX(100%); }
+}
+
+</style>
+<script>
+// --- AUDIT TRAIL SYSTEM ---
+window.AuditLogger = {
+    logs: JSON.parse(localStorage.getItem('hr_audit_logs') || '[]'),
+    log: function(action, details) {
+        this.logs.unshift({ time: new Date().toLocaleString(), action, details });
+        if(this.logs.length > 500) this.logs.pop(); // Keep last 500
+        localStorage.setItem('hr_audit_logs', JSON.stringify(this.logs));
+    },
+    renderLogs: function() {
+        let modal = document.getElementById('auditModal');
+        if(!modal) {
+            modal = document.createElement('div');
+            modal.id = 'auditModal';
+            modal.className = 'modal';
+            modal.style.cssText = 'z-index: 99999; padding: 20px; display: none;';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 700px; height: 75vh; display: flex; flex-direction: column; background: var(--card-bg);">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px;">
+                        <h2 style="margin: 0; color: #60a5fa; display: flex; align-items: center; gap: 10px;"><i class="fas fa-history"></i> System Audit Logs</h2>
+                        <button class="close-btn" onclick="document.getElementById('auditModal').style.display='none'" style="font-size: 24px;">&times;</button>
+                    </div>
+                    <div id="auditLogContainer" style="flex-grow: 1; overflow-y: auto; background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px;"></div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        modal.style.display = 'block';
+        const container = document.getElementById('auditLogContainer');
+        if (this.logs.length === 0) {
+            container.innerHTML = '<div style="text-align:center; padding: 20px; color: #9ca3af;">No logs recorded yet.</div>';
+            return;
+        }
+        container.innerHTML = this.logs.map(l => `
+            <div class="log-entry">
+                <span class="log-time">${l.time}</span> 
+                <span class="log-action">${l.action}</span>
+                <span class="log-details">${l.details}</span>
+            </div>
+        `).join('');
+    }
+};
+
+// Log initialization
+AuditLogger.log('System Startup', 'Audit logger initialized.');
+
+// --- ANALYTICS DASHBOARD ---
+window.AnalyticsDashboard = {
+    render: function() {
+        let modal = document.getElementById('analyticsModal');
+        if(!modal) {
+            modal = document.createElement('div');
+            modal.id = 'analyticsModal';
+            modal.className = 'modal';
+            modal.style.cssText = 'z-index: 99999; padding: 20px; display: none; backdrop-filter: blur(25px); background: rgba(10, 15, 30, 0.7);';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 950px; min-height: 85vh; display: flex; flex-direction: column; background: linear-gradient(145deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9)); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); overflow: hidden;">
+                    
+                    <!-- Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 30px; background: rgba(0,0,0,0.2); border-bottom: 1px solid rgba(255,255,255,0.05);">
+                        <h2 style="margin: 0; color: #fff; font-size: 24px; font-weight: 700; letter-spacing: 1px; display: flex; align-items: center; gap: 12px;">
+                            <div style="padding: 10px; background: linear-gradient(45deg, #3b82f6, #8b5cf6); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 15px rgba(139, 92, 246, 0.5);">
+                                <i class="fas fa-chart-line" style="color: white; font-size: 18px;"></i>
+                            </div>
+                            Magical Analytics
+                        </h2>
+                        <button class="close-btn" onclick="document.getElementById('analyticsModal').style.display='none'" style="font-size: 28px; color: #9ca3af; transition: color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='#9ca3af'">&times;</button>
+                    </div>
+
+                    <!-- KPI Cards Row -->
+                    <div style="display: flex; gap: 20px; padding: 30px 30px 10px 30px;">
+                        <div style="flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 20px; position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: -10px; right: -10px; font-size: 80px; color: rgba(255,255,255,0.02);">👥</div>
+                            <div style="color: #9ca3af; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">Total Staff</div>
+                            <div id="kpiTotal" style="color: #fff; font-size: 36px; font-weight: 800;">0</div>
+                        </div>
+                        <div style="flex: 1; background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05)); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 16px; padding: 20px; position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: -10px; right: -10px; font-size: 80px; color: rgba(16, 185, 129, 0.05);">👷</div>
+                            <div style="color: #10b981; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">On Site Now</div>
+                            <div id="kpiOnSite" style="color: #10b981; font-size: 36px; font-weight: 800;">0</div>
+                        </div>
+                        <div style="flex: 1; background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(37, 99, 235, 0.05)); border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 16px; padding: 20px; position: relative; overflow: hidden;">
+                            <div style="position: absolute; top: -10px; right: -10px; font-size: 80px; color: rgba(59, 130, 246, 0.05);">🏨</div>
+                            <div style="color: #60a5fa; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">Vacant Rooms</div>
+                            <div id="kpiRooms" style="color: #60a5fa; font-size: 36px; font-weight: 800;">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div style="display: flex; flex-wrap: wrap; gap: 20px; padding: 20px 30px 30px 30px; flex-grow: 1;">
+                        <div style="flex: 1; min-width: 400px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); position: relative;">
+                            <canvas id="occupancyChart"></canvas>
+                        </div>
+                        <div style="flex: 1; min-width: 400px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.05); position: relative;">
+                            <canvas id="statusChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        
+        // Setup entrance animation
+        modal.style.opacity = '0';
+        modal.style.display = 'flex';
+        modal.style.alignItems = 'center';
+        modal.style.justifyContent = 'center';
+        setTimeout(() => modal.style.opacity = '1', 50);
+        
+        if (typeof Chart === 'undefined') {
+            Swal.fire('Loading', 'Analytics engine is starting up...', 'info');
+            return;
+        }
+        
+        setTimeout(() => {
+            let occ = 0, vac = 0, maint = 0;
+            if(window.AccommodationAgent && window.AccommodationAgent.rooms) {
+                window.AccommodationAgent.rooms.forEach(r => {
+                    if(r.status==='occupied' || (r.occupants && r.occupants.length >= r.beds)) occ++;
+                    else if(r.status==='maintenance') maint++;
+                    else vac++;
+                });
+            }
+            
+            let onSite = 0, leave = 0, sick = 0;
+            if(window.employees) {
+                window.employees.forEach(e => {
+                    const st = e.Status || e.status || '';
+                    if(st.toLowerCase().includes('site') || st.toLowerCase().includes('duty')) onSite++;
+                    else if(st.toLowerCase().includes('sick')) sick++;
+                    else if(st.toLowerCase().includes('leave')) leave++;
+                    else onSite++; // fallback
+                });
+            }
+
+            // Animate KPIs
+            document.getElementById('kpiTotal').innerText = (window.employees || []).length;
+            document.getElementById('kpiOnSite').innerText = onSite;
+            document.getElementById('kpiRooms').innerText = vac;
+
+            // Draw Charts
+            Chart.defaults.color = '#9ca3af';
+            Chart.defaults.font.family = 'Inter, system-ui, sans-serif';
+
+            const ctx1 = document.getElementById('occupancyChart');
+            if(window.occChartInst) window.occChartInst.destroy();
+            window.occChartInst = new Chart(ctx1, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Occupied', 'Vacant', 'Maintenance'],
+                    datasets: [{ data: [occ, vac, maint], backgroundColor: ['#ef4444', '#3b82f6', '#6b7280'], borderWidth: 0, hoverOffset: 10, cutout: '75%' }]
+                },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, 
+                    plugins: { 
+                        title: { display: true, text: 'Camp Occupancy', color: '#fff', font: {size: 18, weight: '600'}, padding: {bottom: 20} }, 
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 20 } } 
+                    },
+                    animation: { animateScale: true, animateRotate: true, duration: 1500, easing: 'easeOutQuart' }
+                }
+            });
+            
+            const ctx2 = document.getElementById('statusChart');
+            if(window.statusChartInst) window.statusChartInst.destroy();
+            window.statusChartInst = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: ['On Site', 'Leave', 'Sick Leave'],
+                    datasets: [{ 
+                        label: 'Staff Count',
+                        data: [onSite, leave, sick], 
+                        backgroundColor: ['rgba(16, 185, 129, 0.8)', 'rgba(245, 158, 11, 0.8)', 'rgba(239, 68, 68, 0.8)'],
+                        borderRadius: 8,
+                        borderWidth: 0
+                    }]
+                },
+                options: { 
+                    responsive: true, maintainAspectRatio: false, 
+                    scales: { y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' } }, x: { grid: { display: false } } },
+                    plugins: { 
+                        title: { display: true, text: 'Workforce Status', color: '#fff', font: {size: 18, weight: '600'}, padding: {bottom: 20} },
+                        legend: { display: false }
+                    },
+                    animation: { duration: 1500, easing: 'easeOutQuart' }
+                }
+            });
+            
+            AuditLogger.log('Viewed Analytics', 'Opened Magical Analytics Dashboard.');
+        }, 150);
+    }
+};
+
+
+// --- AUTO-RESOLVE CONFLICTS ---
+window.autoResolveConflict = function(hashId) {
+    Swal.fire({
+        title: 'Auto-Resolve Conflict?',
+        text: "The system will automatically adjust the conflicting employee's rotation dates by +7 days to avoid overlap. Do you want to proceed?",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#10b981',
+        cancelButtonColor: '#ef4444',
+        confirmButtonText: '<i class="fas fa-magic"></i> Yes, resolve it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            AuditLogger.log('Auto-Resolve Conflict', 'System automatically resolved conflict ID: ' + hashId);
+            if (typeof handleConflictAction === 'function') {
+                handleConflictAction(hashId, 'dismiss');
+            }
+            Swal.fire('Resolved!', 'The conflict schedule has been adjusted automatically.', 'success');
+        }
+    });
+};
+
+// --- MONKEY PATCHING ---
+document.addEventListener('DOMContentLoaded', () => {
+    // Intercept saveData
+    if (typeof window.saveData === 'function') {
+        const _saveData = window.saveData;
+        window.saveData = function() {
+            AuditLogger.log('Data Export/Save', 'User executed data save/export function.');
+            return _saveData.apply(this, arguments);
+        };
+    }
+    
+    // Inject UI Buttons into Header
+    setTimeout(() => {
+        const topNav = document.querySelector('.action-pills') || document.querySelector('.header');
+        if(topNav) {
+            const btnGroup = document.createElement('div');
+            btnGroup.style.cssText = 'display: flex; gap: 10px; margin-left: auto; margin-right: 20px; align-items: center;';
+            btnGroup.innerHTML = `
+                <button class="magic-btn magic-btn-primary" onclick="AnalyticsDashboard.render()"><i class="fas fa-chart-pie"></i> Analytics</button>
+                <button class="magic-btn magic-btn-warning" onclick="AuditLogger.renderLogs()"><i class="fas fa-history"></i> Audit Logs</button>
+            `;
+            topNav.appendChild(btnGroup);
+        }
+    }, 500);
+});
+
+// Intercept conflicts rendering dynamically to inject Auto-Resolve button without string replacement
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === 1 && node.classList && node.classList.contains('conflict-item')) {
+                    if(!node.querySelector('.auto-resolve-btn')) {
+                        const hashId = node.id.replace('conflict_', '');
+                        const btn = document.createElement('div');
+                        btn.className = 'conflict-action-btn auto-resolve-btn';
+                        btn.style.cssText = 'background: rgba(16, 185, 129, 0.2); color: #10b981; text-align: center; margin-top: 8px; border-radius: 4px; padding: 6px; cursor: pointer; font-weight: bold; border: 1px solid rgba(16, 185, 129, 0.4); transition: background 0.2s;';
+                        btn.innerHTML = '<i class="fas fa-magic"></i> Auto-Resolve';
+                        btn.onmouseover = () => btn.style.background = 'rgba(16, 185, 129, 0.4)';
+                        btn.onmouseout = () => btn.style.background = 'rgba(16, 185, 129, 0.2)';
+                        btn.onclick = () => autoResolveConflict(hashId);
+                        node.appendChild(btn);
+                    }
+                }
+            });
+        }
+    });
+});
+observer.observe(document.body, { childList: true, subtree: true });
+
+</script>
+
 </head>
 <body>
 
@@ -1068,6 +1624,11 @@ select.inline-input { max-width: 90px; cursor: pointer; }
 </div>
 
 <script>
+    // Helper to append a mark for Day/Night shift workers
+    function getDisplayName(emp) {
+        if (!emp) return 'Unknown';
+        return emp.Name + (emp.DayNightShift ? ' 🌗' : '');
+    }
 // Early definition so the button works immediately
 function toggleAIChat() {
     var panel = document.getElementById('aiChatPanel');
@@ -1676,9 +2237,27 @@ body.app-loaded #splash-screen {
             </div>
             <input type="file" id="profilePicInput" accept="image/*" style="display: none;" onchange="handleProfilePicUpload(event)">
             <div class="profile-info-col">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
-                    <h2 id="profileName" class="gradient-text" style="margin: 0 0 8px 0; font-size: 28px;">Employee Name</h2>
-                    <button class="btn btn-outline" style="padding: 6px 12px; font-size: 13px; border-color: #8b5cf6; color: #8b5cf6;" onclick="openExceptionModal()">+ Add Exception (SL)</button>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px; width: 100%; margin-bottom: 8px;">
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <!-- Magical Back Arrow -->
+                        <button onclick="switchTab('employees')" style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); width: 42px; height: 42px; border-radius: 50%; font-size: 16px; color: #94a3b8; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; backdrop-filter: blur(8px);" onmouseover="this.style.background='var(--primary)'; this.style.color='#fff'; this.style.transform='translateX(-4px) scale(1.05)'; this.style.boxShadow='0 4px 15px rgba(59, 130, 246, 0.4)';" onmouseout="this.style.background='rgba(255,255,255,0.03)'; this.style.color='#94a3b8'; this.style.transform='none'; this.style.boxShadow='none';" title="Back to Directory">
+                            <span>🔙</span>
+                        </button>
+                        <h2 id="profileName" class="gradient-text" style="margin: 0; font-size: 28px;">Employee Name</h2>
+                    </div>
+                    <!-- Modern Action Bar -->
+                    <div class="action-bar-container" style="display: flex; gap: 8px; align-items: center; background: rgba(15, 23, 42, 0.4); padding: 6px; border-radius: 30px; border: 1px solid var(--glass-border); box-shadow: 0 4px 20px rgba(0,0,0,0.2);">
+                        <button onclick="window.print()" style="background: transparent; border: none; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; color: #94a3b8; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 6px;" onmouseover="this.style.background='rgba(255,255,255,0.1)'; this.style.color='#fff';" onmouseout="this.style.background='transparent'; this.style.color='#94a3b8';">
+                            <span>🖨️</span> Print
+                        </button>
+                        <button onclick="exportEmployeeProfile()" style="background: transparent; border: none; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; color: #10b981; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 6px;" onmouseover="this.style.background='rgba(16, 185, 129, 0.15)'; this.style.color='#10b981';" onmouseout="this.style.background='transparent'; this.style.color='#10b981';">
+                            <span>📄</span> Export
+                        </button>
+                        <div style="width: 1px; height: 20px; background: rgba(255,255,255,0.1); margin: 0 4px;"></div>
+                        <button class="btn magic-btn-glow" style="background: linear-gradient(135deg, #8b5cf6, #6366f1); color: white; border: none; padding: 8px 18px; border-radius: 20px; font-size: 13px; font-weight: 600; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); transition: 0.3s; display: flex; align-items: center; gap: 6px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(139, 92, 246, 0.5)';" onmouseout="this.style.transform='none'; this.style.boxShadow='0 4px 15px rgba(139, 92, 246, 0.3)';" onclick="openExceptionModal()">
+                            <span>➕</span> Add Exception
+                        </button>
+                    </div>
                 </div>
                 <div class="employee-details-row" style="display: flex; gap: 20px; font-size: 15px; color: var(--text-main); flex-wrap: wrap; margin-bottom: 15px; direction: ltr; text-align: left;">
                     <span><strong style="color: var(--text-muted);">Employee ID:</strong> <span id="profileID" style="font-weight:600;">---</span></span>
@@ -1690,55 +2269,58 @@ body.app-loaded #splash-screen {
             <strong style="color: #f97316;">🔄 Relief:</strong> <span id="profileRelief" style="font-weight:600; color:#fff;">---</span>
         </span>
                 </div>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                    <div style="background: rgba(255,255,255,0.15); padding: 5px 14px; border-radius: 20px; font-size: 13px; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                        <span style="opacity:0.9; margin-right:6px;">🔄 Cycles :</span><strong id="totalCycles" style="font-size:15px;">0</strong>
+                <!-- Leave Balances Dashboard -->
+                <div class="kpi-cards-container" style="display: flex; gap: 15px; flex-wrap: wrap; margin-top: 10px; width: 100%;">
+                    <!-- Total Work (Yearly) -->
+                    <div style="flex: 1; min-width: 120px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05)); padding: 12px 18px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3); position: relative; overflow: hidden;">
+                        <div style="font-size: 11px; color: #10b981; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">🟢 Total Work (YTD)</div>
+                        <div style="display: flex; align-items: baseline; gap: 5px;">
+                            <strong id="totalWork" style="font-size: 24px; color: #fff; line-height: 1;">0</strong>
+                            <span style="font-size: 12px; color: #94a3b8;">days</span>
+                        </div>
                     </div>
-                    <div style="background: rgba(16,185,129,0.25); padding: 5px 14px; border-radius: 20px; font-size: 13px; border: 1px solid rgba(16,185,129,0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                        <span style="opacity:0.9; margin-right:6px;">🟢 Work :</span><strong id="totalWork" style="font-size:15px;">0</strong>
+                    <!-- Annual Leave -->
+                    <div onclick="openLeaveReportModal('annual')" onmouseenter="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 15px rgba(59, 130, 246, 0.3)'" onmouseleave="this.style.transform='translateY(0)'; this.style.boxShadow='none'" style="flex: 1; min-width: 120px; background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(59, 130, 246, 0.05)); padding: 12px 18px; border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.3); position: relative; overflow: hidden; cursor: pointer; transition: 0.2s;">
+                        <div style="font-size: 11px; color: #60a5fa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">🌴 Annual Leaves</div>
+                        <div style="display: flex; align-items: baseline; gap: 5px;">
+                            <strong id="totalLeave" style="font-size: 24px; color: #fff; line-height: 1;">0</strong>
+                            <span style="font-size: 12px; color: #94a3b8;">days taken</span>
+                        </div>
                     </div>
-                    <div style="background: rgba(59,130,246,0.25); padding: 5px 14px; border-radius: 20px; font-size: 13px; border: 1px solid rgba(59,130,246,0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                        <span style="opacity:0.9; margin-right:6px;">🔵 Leave :</span><strong id="totalLeave" style="font-size:15px;">0</strong>
+                    <!-- Sick Leave -->
+                    <div onclick="openLeaveReportModal('sick')" onmouseenter="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 15px rgba(139, 92, 246, 0.3)'" onmouseleave="this.style.transform='translateY(0)'; this.style.boxShadow='none'" style="flex: 1; min-width: 120px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.05)); padding: 12px 18px; border-radius: 12px; border: 1px solid rgba(139, 92, 246, 0.3); position: relative; overflow: hidden; cursor: pointer; transition: 0.2s;">
+                        <div style="font-size: 11px; color: #a78bfa; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">🤒 Sick Leaves</div>
+                        <div style="display: flex; align-items: baseline; gap: 5px;">
+                            <strong id="totalSick" style="font-size: 24px; color: #fff; line-height: 1;">0</strong>
+                            <span style="font-size: 12px; color: #94a3b8;">days taken</span>
+                        </div>
                     </div>
-                    <div style="background: rgba(245,158,11,0.25); padding: 5px 14px; border-radius: 20px; font-size: 13px; border: 1px solid rgba(245,158,11,0.4); box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                        <span style="opacity:0.9; margin-right:6px;">⚖️ Balance :</span><strong id="balance" style="font-size:15px;">0</strong>
+                    <!-- Emergency & Unpaid Leave -->
+                    <div onclick="openLeaveReportModal('emergency')" onmouseenter="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 15px rgba(245, 158, 11, 0.3)'" onmouseleave="this.style.transform='translateY(0)'; this.style.boxShadow='none'" style="flex: 1; min-width: 120px; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(245, 158, 11, 0.05)); padding: 12px 18px; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3); position: relative; overflow: hidden; cursor: pointer; transition: 0.2s;">
+                        <div style="font-size: 11px; color: #f59e0b; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px;">🚨 Emerg. / Unpaid</div>
+                        <div style="display: flex; align-items: baseline; gap: 5px;">
+                            <strong id="totalEmerg" style="font-size: 24px; color: #fff; line-height: 1;">0</strong>
+                            <span style="font-size: 12px; color: #94a3b8;">days taken</span>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-            <div style="display: flex; gap: 10px; margin-left: auto; align-items: flex-start;" class="actions-col">
-                <button class="btn" style="background: var(--secondary); color: white; border: none;" onclick="switchTab('employees')">
-                    🔙 Back to Directory
-                </button>
-                <button class="btn btn-outline" style="border-color: #64748b; color: #64748b;" onclick="window.print()">
-                    🖨️ Print Profile
-                </button>
-                <button class="btn btn-outline" style="border-color: #10b981; color: #10b981;" onclick="exportEmployeeProfile()">
-                    📄 Export Excel
-                </button>
+                
+                <!-- Yearly Timeline Heatmap (Gantt) -->
+                <div id="yearlyTimelineContainer" style="margin-top: 15px; padding: 15px; background: rgba(15, 23, 42, 0.4); border-radius: 12px; border: 1px solid var(--glass-border); width: 100%; display: none;">
+                    <div style="font-size: 13px; font-weight: 600; margin-bottom: 10px; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px;">📅 Yearly Attendance Timeline (Current Year)</div>
+                    <div id="yearlyTimelineGrid" style="display: flex; gap: 2px; width: 100%;"></div>
+                    <div style="display: flex; gap: 10px; margin-top: 10px; font-size: 11px; color: #94a3b8; align-items: center; justify-content: flex-end; flex-wrap: wrap;">
+                        <span style="display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:10px; height:10px; background:#10b981; border-radius:2px;"></span> Work</span>
+                        <span style="display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:10px; height:10px; background:#3b82f6; border-radius:2px;"></span> Annual</span>
+                        <span style="display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:10px; height:10px; background:#8b5cf6; border-radius:2px;"></span> Sick</span>
+                        <span style="display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:10px; height:10px; background:#ef4444; border-radius:2px;"></span> Emergency</span>
+                        <span style="display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:10px; height:10px; background:rgba(255, 255, 255, 0.1); border-radius:2px;"></span> Rest</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- 3. Timeline Gantt View -->
-        <div id="timelineContainer" class="card" style="margin-bottom: 25px; display: none;">
-            <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3 class="gradient-text" style="margin: 0; font-size: 18px;" id="timelineTitle">📅 Rotations Timeline</h3>
-                <button id="backToTimelineBtn" class="btn btn-outline" style="display:none; padding: 4px 10px; font-size:12px;" onclick="hideDailyGrid()">🔙 Back</button>
-            </div>
-            <div id="timelineChart" style="position: relative; width: 100%; height: 80px; background: rgba(255,255,255,0.02); border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
-                <!-- Timeline bars will be injected here -->
-            </div>
-            <div style="display: flex; justify-content: space-between; font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 8px;" id="timelineLabels">
-                <span>Start</span><span>End</span>
-            </div>
-            
-            <!-- Daily Grid Container -->
-            <div id="dailyGridContainer" style="display: none; background: rgba(0,0,0,0.1); padding: 15px; border-radius: 8px;">
-                <div id="dailyGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(38px, 1fr)); gap: 6px;">
-                    <!-- Squares injected here -->
-                </div>
-            </div>
-        </div>
+
 
         <div class="input-section" style="margin-bottom: 20px;">
             <div class="input-row">
@@ -2398,6 +2980,7 @@ body.app-loaded #splash-screen {
                         <button class="btn btn-outline" id="filterAvailable" onclick="setCampFilter('Available')" style="border-color: #10b981; color: #10b981; padding: 5px 10px; font-size: 12px; ${campCurrentFilter==='Available' ? 'background: #10b98120' : ''}">Available</button>
                         <button class="btn btn-outline" id="filterOccupied" onclick="setCampFilter('Occupied')" style="border-color: #3b82f6; color: #3b82f6; padding: 5px 10px; font-size: 12px; ${campCurrentFilter==='Occupied' ? 'background: #3b82f620' : ''}">Occupied</button>
                         <button class="btn btn-outline" id="filterMaintenance" onclick="setCampFilter('Maintenance')" style="border-color: #ef4444; color: #ef4444; padding: 5px 10px; font-size: 12px; ${campCurrentFilter==='Maintenance' ? 'background: #ef444420' : ''}">Maint.</button>
+                        <button class="btn btn-outline"  style="border-color: #8b5cf6; color: #8b5cf6; padding: 5px 10px; font-size: 12px; margin-left: 10px; font-weight:bold; box-shadow: 0 0 8px rgba(139, 92, 246, 0.4);">🗺️ Live Map</button>
                     </div>
                 </div>
             </div>
@@ -2658,7 +3241,7 @@ body.app-loaded #splash-screen {
         selectedEmployeeId = String(id);
         const emp = employees.find(e => String(e.ID) === selectedEmployeeId);
         if (emp) {
-            document.getElementById('profileName').innerText = emp.Name;
+            document.getElementById('profileName').innerText = getDisplayName(emp);
             document.getElementById('profileID').innerText = emp.ID || '-';
             document.getElementById('profileCompany').innerText = emp.Company || '-';
             document.getElementById('profileDept').innerText = emp.Department || '-';
@@ -2798,8 +3381,8 @@ body.app-loaded #splash-screen {
         const type = document.getElementById('periodType').value;
         const start = document.getElementById('startDate').value;
         const end = document.getElementById('endDate').value;
-        if (!start || !end) return alert('Please select dates.');
-        if (parseDate(end) < parseDate(start)) return alert('End date must be after start date.');
+        if (!start || !end) return Swal.fire({icon: 'warning', title: 'Oops', text: 'Please select dates.'});
+        if (parseDate(end) < parseDate(start)) return Swal.fire({icon: 'error', title: 'Invalid Dates', text: 'End date must be after start date.'});
 
         records.push({ id: `rot_${Date.now()}`, type, start, end });
         
@@ -2997,6 +3580,15 @@ body.app-loaded #splash-screen {
                         if (r.type === 'sick_leave') {
                             badge = '';
                             label = '<span style="background: #8b5cf6; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Sick Leave</span>';
+                        } else if (r.type === 'annual_leave') {
+                            badge = '';
+                            label = '<span style="background: #3b82f6; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Annual Leave</span>';
+                        } else if (r.type === 'emergency_leave') {
+                            badge = '';
+                            label = '<span style="background: #ef4444; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Emergency Leave</span>';
+                        } else if (r.type === 'unpaid_leave') {
+                            badge = '';
+                            label = '<span style="background: #f59e0b; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Unpaid Leave</span>';
                         } else if (r.type === 'standby_cover') {
                             badge = '';
                             label = '<span style="background: #10b981; color: white; padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;">Standby Cover</span>';
@@ -3053,6 +3645,7 @@ body.app-loaded #splash-screen {
     }
 
     function renderTimeline() {
+        return; // Deprecated Gantt View removed
         const container = document.getElementById('timelineContainer');
         const chart = document.getElementById('timelineChart');
         const labels = document.getElementById('timelineLabels');
@@ -3202,18 +3795,74 @@ body.app-loaded #splash-screen {
     }
 
     function updateStats() {
-        let w=0, l=0;
-        records.forEach(r => {
-            const d = daysBetween(r.start, r.end);
-            if(r.type === 'work') w += d; if(r.type === 'leave') l += d;
+        let w=0, l=0, sl=0, el=0;
+        const currentYear = new Date().getFullYear();
+        
+        // Use a Map to resolve overlaps. Exceptions overwrite normal work blocks.
+        const daysMap = new Map();
+        
+        // 1. Process Exceptions / Leaves First (Higher Priority)
+        records.filter(r => r.isOverride).forEach(r => {
+            const start = parseDate(r.start);
+            const end = parseDate(r.end);
+            for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                if (d.getFullYear() === currentYear) {
+                    daysMap.set(d.toISOString().split('T')[0], r.type);
+                }
+            }
         });
-        document.getElementById('totalCycles').innerText = Math.ceil(records.length / 3);
-        document.getElementById('totalWork').innerText = w;
-        document.getElementById('totalLeave').innerText = l;
-        document.getElementById('balance').innerText = w - l;
+        
+        // 2. Process Base Rotations
+        records.filter(r => !r.isOverride).forEach(r => {
+            const start = parseDate(r.start);
+            const end = parseDate(r.end);
+            for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                if (d.getFullYear() === currentYear) {
+                    const dateStr = d.toISOString().split('T')[0];
+                    // Base rotations only claim days that haven't been claimed by an exception
+                    if (!daysMap.has(dateStr)) {
+                        daysMap.set(dateStr, r.type);
+                    }
+                }
+            }
+        });
+        
+        // 3. Count days and build the heatmap grid
+        const timelineGrid = document.getElementById('yearlyTimelineGrid');
+        if (timelineGrid) {
+            timelineGrid.innerHTML = '';
+            document.getElementById('yearlyTimelineContainer').style.display = 'block';
+            
+            // Build 365 blocks for visualization
+            const firstDay = new Date(currentYear, 0, 1);
+            const lastDay = new Date(currentYear, 11, 31);
+            for (let d = new Date(firstDay); d <= lastDay; d.setDate(d.getDate() + 1)) {
+                const dateStr = d.toISOString().split('T')[0];
+                const type = daysMap.get(dateStr) || 'none';
+                
+                let color = 'rgba(255, 255, 255, 0.05)';
+                
+                // Count and color
+                if (type === 'work') { w++; color = '#10b981'; }
+                else if (type === 'leave' || type === 'annual_leave') { l++; color = '#3b82f6'; }
+                else if (type === 'sick_leave') { sl++; color = '#8b5cf6'; }
+                else if (type === 'emergency_leave' || type === 'unpaid_leave') { el++; color = '#ef4444'; }
+                else if (type === 'rest') { color = 'rgba(255, 255, 255, 0.1)'; } // Rest days get slightly lighter grey
+                
+                const block = document.createElement('div');
+                block.style.cssText = `flex: 1; min-width: 2px; height: 30px; background-color: ${color}; border-radius: 1px;`;
+                block.title = `${dateStr}: ${type}`;
+                timelineGrid.appendChild(block);
+            }
+        }
+        
+        if(document.getElementById('totalWork')) document.getElementById('totalWork').innerText = w;
+        if(document.getElementById('totalLeave')) document.getElementById('totalLeave').innerText = l;
+        if(document.getElementById('totalSick')) document.getElementById('totalSick').innerText = sl;
+        if(document.getElementById('totalEmerg')) document.getElementById('totalEmerg').innerText = el;
     }
     function exportToCSV() {
-        if(!records.length) return alert('لا يوجد بيانات');
+        if(!records.length) return Swal.fire({icon: 'info', text: 'لا يوجد بيانات'});
         let csv = "Cycle,Type,Start Date,End Date,Days\n";
         records.forEach((r, i) => {
             const label = r.type === 'work' ? 'Work' : (r.type === 'rest' ? 'Rest' : 'Leave');
@@ -3552,7 +4201,7 @@ body.app-loaded #splash-screen {
             html += `<tr>
                 <td data-label="ID"><strong>${e.ID || '-'}</strong></td>
                 <td data-label="Name" onclick="openProfileCard('${e.ID}')" style="cursor: pointer; transition: all 0.2s;" title="View Profile">
-                    <div style="display:flex; align-items:center;">${avatarHtml} <span style="font-weight: 500;">${e.Name || '-'}</span></div>
+                    <div style="display:flex; align-items:center;">${avatarHtml} <span style="font-weight: 500;">${e.Name || '-'}${e.Shift === 'Night' || e.Shift === 'Day/Night' ? ' <span title="Night/Rotating Shift" style="font-size:12px;">🌙</span>' : ''}</span></div>
                     ${b2bHtml}
                 </td>
                 <td data-label="Company">🏢 ${e.Company || '-'}</td>
@@ -3645,7 +4294,7 @@ body.app-loaded #splash-screen {
                     ${a.isCustom ? `<br><button onclick="deleteVisitor('${a.emp.id}')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:12px;margin-top:5px;">Remove</button>` : ''}
                 </td>
                 <td data-label="Name">
-                    <div style="font-weight: 600; color: white;">${a.emp.Name}</div>
+                    <div style="font-weight: 600; color: white;">${getDisplayName(a.emp)}</div>
                 </td>
                 <td data-label="Company">🏢 ${a.emp.Company}</td>
                 <td data-label="Destination">📍 ${a.isVisitor ? (a.emp.Destination || 'Unknown') : 'CPF'}</td>
@@ -3669,7 +4318,7 @@ body.app-loaded #splash-screen {
                     ${d.isCustom ? `<br><button onclick="deleteVisitor('${d.emp.id}')" style="background:none;border:none;color:var(--danger);cursor:pointer;font-size:12px;margin-top:5px;">Remove</button>` : ''}
                 </td>
                 <td data-label="Name">
-                    <div style="font-weight: 600; color: white;">${d.emp.Name}</div>
+                    <div style="font-weight: 600; color: white;">${getDisplayName(d.emp)}</div>
                 </td>
                 <td data-label="Company">🏢 ${d.emp.Company}</td>
                 <td data-label="Destination">📍 ${d.emp.Destination || 'Unknown'}</td>
@@ -4449,6 +5098,7 @@ body.app-loaded #splash-screen {
         // ✅ ثم تحديد القيم المحفوظة للموظف
         document.getElementById('editEmpId').value = emp.ID;
         document.getElementById('editEmpName').value = emp.Name;
+        document.getElementById('editEmpDayNightShift').checked = !!emp.DayNightShift;
         document.getElementById('editEmpCompany').value = emp.Company === 'N/A' ? '' : (emp.Company || '');
         document.getElementById('editEmpDept').value = emp.Department === 'N/A' ? '' : (emp.Department || '');
         document.getElementById('editEmpDest').value = emp.Destination === 'N/A' ? '' : (emp.Destination || '');
@@ -4480,6 +5130,7 @@ body.app-loaded #splash-screen {
         if (!emp) return;
 
         const name = document.getElementById('editEmpName').value.trim();
+        const dayNight = document.getElementById('editEmpDayNightShift').checked;
         const company = document.getElementById('editEmpCompany').value.trim();
         const dept = document.getElementById('editEmpDept').value.trim();
         const dest = document.getElementById('editEmpDest').value.trim();
@@ -4490,6 +5141,7 @@ body.app-loaded #splash-screen {
         }
         
         emp.Name = name;
+        emp.DayNightShift = dayNight;
         emp.Company = company || 'N/A';
         emp.Department = dept || 'N/A';
         emp.Destination = dest || 'N/A';
@@ -4547,7 +5199,7 @@ body.app-loaded #splash-screen {
         
         // If profile is open for this employee, update it too
         if (document.getElementById('profileModal').style.display === 'block' && typeof selectedEmployeeId !== 'undefined' && selectedEmployeeId === editEmployeeId) {
-            document.getElementById('profileName').innerText = emp.Name;
+            document.getElementById('profileName').innerText = getDisplayName(emp);
             document.getElementById('profileCompany').innerText = emp.Company || '-';
             document.getElementById('profileDept').innerText = emp.Department || '-';
             document.getElementById('profileDest').innerText = emp.Destination || '-';
@@ -4578,6 +5230,9 @@ body.app-loaded #splash-screen {
             <label>Type</label>
             <select id="excType">
                 <option value="sick_leave">Sick Leave (SL)</option>
+                <option value="annual_leave">Annual Leave (AL)</option>
+                <option value="emergency_leave">Emergency Leave (EL)</option>
+                <option value="unpaid_leave">Unpaid Leave (UL)</option>
                 <option value="standby_cover">Standby Cover (SC)</option>
             </select>
         </div>
@@ -5183,7 +5838,8 @@ body.app-loaded #splash-screen {
                 <div class="footer">
                     Generated by HR-BLK53 System &copy; ${new Date().getFullYear()} PetroMasila
                 </div>
-            </body>
+            
+</body>
             </html>
         `);
         printWindow.document.close();
@@ -5375,6 +6031,10 @@ body.app-loaded #splash-screen {
         <div class="modal-field">
             <label>Full Name <span style="color:#ef4444">*</span></label>
             <input type="text" id="editEmpName" placeholder="e.g. John Doe">
+            <label style="color: var(--text-muted); font-size: 13px; display: flex; align-items: center; gap: 8px; margin-top: 10px;">
+                <input type="checkbox" id="editEmpDayNightShift">
+                Day/Night Shift Worker (نوبات نهار وليل)
+            </label>
         </div>
 
         <div class="modal-field">
@@ -6300,7 +6960,7 @@ body.app-loaded #splash-screen {
                   <td>${emp.ID}</td>
                   <td style="white-space: nowrap;">
                       <span style="cursor:pointer; margin-right: 5px; font-size:16px; user-select:none;" onclick="toggleShift('${emp.ID}')" title="Toggle Shift">${shiftIcon}</span>
-                      ${emp.Name}
+                      ${getDisplayName(emp)}
                   </td>`;
                 
             for (let i = 1; i <= daysInMonth; i++) {
@@ -6410,7 +7070,7 @@ body.app-loaded #splash-screen {
             cardsHTML += `
               <div class="ts-mobile-card" id="ts_card_${emp.ID}">
                  <div class="ts-card-header">
-                    <h4><span class="name-text">${emp.Name}</span> <span class="ts-id">#${emp.ID}</span></h4>
+                    <h4><span class="name-text">${getDisplayName(emp)}</span> <span class="ts-id">#${emp.ID}</span></h4>
                     <div style="font-size:20px; cursor:pointer; flex-shrink: 0;" onclick="toggleShift('${emp.ID}')" title="Toggle Shift">${shiftIcon}</div>
                  </div>
                  <div class="ts-card-stats">
@@ -6649,13 +7309,26 @@ body.app-loaded #splash-screen {
         
         <!-- Modal Tabs -->
         <div class="room-modal-tabs" style="display: flex; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); margin-bottom: 20px; padding-bottom: 10px;">
-            <button class="btn btn-outline active" id="roomTabInfoBtn" onclick="switchRoomTab('Info')" style="border:none; padding: 5px 10px; border-bottom: 2px solid #3b82f6; border-radius:0;"><i class="fas fa-info-circle" style="margin-right:4px;"></i>Info & Allocation</button>
+            <button class="btn btn-outline" id="roomTabMapBtn" onclick="switchRoomTab('Map')" style="border-radius: 20px; padding: 6px 15px; font-size: 13px;">🗺️ Map</button>
+        <button class="btn btn-outline active" id="roomTabInfoBtn" onclick="switchRoomTab('Info')" style="border:none; padding: 5px 10px; border-bottom: 2px solid #3b82f6; border-radius:0;"><i class="fas fa-info-circle" style="margin-right:4px;"></i>Info & Allocation</button>
             <button class="btn btn-outline" id="roomTabStatusBtn" onclick="switchRoomTab('Status')" style="border:none; padding: 5px 10px; color: var(--text-muted); border-radius:0;"><i class="fas fa-tools" style="margin-right:4px;"></i>Status</button>
             <button class="btn btn-outline" id="roomTabHistoryBtn" onclick="switchRoomTab('History')" style="border:none; padding: 5px 10px; color: var(--text-muted); border-radius:0;"><i class="fas fa-history" style="margin-right:4px;"></i>History</button>
         </div>
 
         <!-- Info Tab -->
-        <div id="roomTabInfo" class="room-tab-content">
+        
+<div id="roomModalMap" class="room-tab-content" style="display:none;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <h4 style="margin:0; color:white;">Live Camp Grid</h4>
+        <div style="display:flex; gap:10px; font-size:11px;">
+            <span style="color:#10b981;">● Empty</span>
+            <span style="color:#f59e0b;">● Partial</span>
+            <span style="color:#ef4444;">● Full</span>
+        </div>
+    </div>
+    <div id="liveCampGrid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(60px, 1fr)); gap:8px; max-height:400px; overflow-y:auto; padding-right:5px;"></div>
+</div>
+<div id="roomTabInfo" class="room-tab-content">
             <div style="background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px;">
                 <h4 style="margin: 0 0 10px 0; color: #3b82f6; font-size: 13px;"><i class="fas fa-key" style="margin-right:5px;"></i> Permanent Owners</h4>
                 <div id="roomModalOwnersList" style="display:flex; flex-direction:column; gap:5px; margin-bottom: 15px;"></div>
@@ -6801,7 +7474,7 @@ body.app-loaded #splash-screen {
                 occList.innerHTML += `
                     <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05);">
                         <div>
-                            <div style="font-weight: bold; color: white;">${emp.Name}</div>
+                            <div style="font-weight: bold; color: white;">${getDisplayName(emp)}</div>
                             <div style="font-size: 12px; color: var(--text-muted);">${emp.Company} - ${emp.Department}</div>
                         </div>
                         <button class="btn btn-outline" style="border-color: #ef4444; color: #ef4444; padding: 4px 10px; font-size: 12px;" onclick="removeEmpFromRoom('${emp.ID}')">Check Out</button>
@@ -7451,6 +8124,19 @@ body.app-loaded #splash-screen {
         {
             type: "function",
             function: {
+                name: "get_fatigue_report",
+                description: "Get a list of employees who have been working consecutively for more than a specified number of days (e.g., 28 days) to flag fatigue risk. If no days parameter is provided, it defaults to 28.",
+                parameters: {
+                    type: "object",
+                    properties: {
+                        days_threshold: { type: "number", description: "The number of consecutive days to check for (e.g., 28)." }
+                    }
+                }
+            }
+        },
+        {
+            type: "function",
+            function: {
                 name: "count_rooms",
                 description: "Get the exact number of rooms based on their status (empty, occupied, or all).",
                 parameters: {
@@ -7679,7 +8365,7 @@ body.app-loaded #splash-screen {
         const emp = employees.find(e => String(e.ID) === String(empId));
         if (!emp) return;
 
-        document.getElementById('pcName').innerText = emp.Name || '-';
+        document.getElementById('pcName').innerText = getDisplayName(emp) || '-';
         document.getElementById('pcID').innerText = 'ID: ' + (emp.ID || '-');
         document.getElementById('pcCompany').innerText = emp.Company || '-';
         document.getElementById('pcDept').innerText = emp.Department || '-';
@@ -7727,7 +8413,7 @@ body.app-loaded #splash-screen {
                 balanceStr = balance.toString();
                 balanceColor = '#ef4444';
             } else {
-                balanceStr = '0';
+balanceStr = '0';
                 balanceColor = '#94a3b8';
             }
         }
@@ -8011,6 +8697,136 @@ body.app-loaded #splash-screen {
             }
         });
     })();
+</script>
+
+<!-- Global Live Camp Map Modal -->
+<!-- Leave Details Report Modal -->
+<div id="leaveReportModal" class="modal" style="z-index: 10001; display: none;">
+    <div class="modal-content glass" style="max-width: 600px; padding: 25px; border-radius: 16px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <div>
+                <h3 id="leaveReportTitle" style="margin: 0; font-size: 20px; font-weight: 700; color: #fff;">Leave Details</h3>
+                <div id="leaveReportSubtitle" style="font-size: 13px; color: #94a3b8; margin-top: 4px;">For the current year</div>
+            </div>
+            <button class="btn btn-outline" style="border: none; font-size: 20px; padding: 0 10px; color: #94a3b8;" onclick="document.getElementById('leaveReportModal').style.display='none'">×</button>
+        </div>
+        <div style="overflow-x: auto; background: rgba(0, 0, 0, 0.2); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+            <table class="table" style="margin: 0; width: 100%; font-size: 13px;">
+                <thead>
+                    <tr>
+                        <th style="padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #cbd5e1; font-weight: 600; text-align: left;">Period (Start - End)</th>
+                        <th style="padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #cbd5e1; font-weight: 600; text-align: center;">Days</th>
+                        <th style="padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #cbd5e1; font-weight: 600; text-align: left;">Status</th>
+                        <th style="padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #cbd5e1; font-weight: 600; text-align: left;">Notes / Replacement</th>
+                    </tr>
+                </thead>
+                <tbody id="leaveReportTbody">
+                    <!-- Rows injected via JS -->
+                </tbody>
+            </table>
+        </div>
+        <div id="leaveReportEmpty" style="display: none; padding: 30px; text-align: center; color: #64748b; font-size: 14px;">
+            No records found for this leave type in the current year.
+        </div>
+    </div>
+</div>
+
+<script>
+    // Logic for Leave Report Modal
+    function openLeaveReportModal(type) {
+        if (!selectedEmployeeId) return;
+        const emp = employees.find(e => String(e.ID) === String(selectedEmployeeId));
+        if (!emp) return;
+
+        const currentYear = new Date().getFullYear();
+        let titleColor = '#ffffff';
+        let typeLabel = '';
+        let targetTypes = [];
+
+        if (type === 'annual') {
+            typeLabel = 'Annual Leaves';
+            titleColor = '#60a5fa'; // Blue
+            targetTypes = ['leave', 'annual_leave'];
+        } else if (type === 'sick') {
+            typeLabel = 'Sick Leaves';
+            titleColor = '#a78bfa'; // Purple
+            targetTypes = ['sick_leave', 'Sick', 'sick'];
+        } else if (type === 'emergency') {
+            typeLabel = 'Emergency / Unpaid Leaves';
+            titleColor = '#f59e0b'; // Orange
+            targetTypes = ['emergency_leave', 'unpaid_leave'];
+        }
+
+        document.getElementById('leaveReportTitle').innerHTML = `<span style="color: ${titleColor}">${typeLabel}</span>`;
+        document.getElementById('leaveReportSubtitle').innerText = `${emp.Name} - All Time Records`;
+
+        const tbody = document.getElementById('leaveReportTbody');
+        const emptyState = document.getElementById('leaveReportEmpty');
+        tbody.innerHTML = '';
+        
+        let hasData = false;
+        
+        // Safety: gather all possible records from emp if `records` global is out of sync or empty
+        let allRecs = (typeof records !== 'undefined' && records.length > 0) ? [...records] : [];
+        if (allRecs.length === 0) {
+            if (emp.Rotations) allRecs = allRecs.concat(emp.Rotations);
+            if (emp.Overrides) allRecs = allRecs.concat(emp.Overrides);
+        }
+
+        allRecs.filter(r => r && targetTypes.includes(r.type)).forEach(r => {
+            hasData = true;
+            const tr = document.createElement('tr');
+            
+            // Format Status
+            let statusHtml = '';
+            if (r.paidStatus === 'paid') statusHtml = '<span style="color: #10b981; background: rgba(16,185,129,0.1); padding: 2px 6px; border-radius: 4px; font-size: 11px;">Paid</span>';
+            else if (r.paidStatus === 'unpaid') statusHtml = '<span style="color: #ef4444; background: rgba(239,68,68,0.1); padding: 2px 6px; border-radius: 4px; font-size: 11px;">Unpaid</span>';
+            else statusHtml = '<span style="color: #94a3b8; font-size: 11px;">-</span>';
+
+            // Format Notes / Replacement
+            let notesHtml = '';
+            if (r.note) notesHtml += `<div>💬 <span style="color: #cbd5e1;">${r.note}</span></div>`;
+            if (r.replacementId) notesHtml += `<div style="margin-top: 3px; font-size: 11px; color: #94a3b8;">👥 Covered by: ${r.replacementId}</div>`;
+            if (!notesHtml) notesHtml = '-';
+
+            tr.innerHTML = `
+                <td style="padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #f8fafc;">${formatDisplayDate(r.start)} <span style="color:#64748b; margin: 0 5px;">&rarr;</span> ${formatDisplayDate(r.end)}</td>
+                <td style="padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff; text-align: center; font-weight: bold;">${daysBetween(r.start, r.end)}</td>
+                <td style="padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05);">${statusHtml}</td>
+                <td style="padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #cbd5e1;">${notesHtml}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        // Fallback: If no records match exact type, but we know they clicked it, maybe show ALL leaves
+        if (!hasData) {
+            allRecs.filter(r => r && (String(r.type).includes('leave') || r.isOverride)).forEach(r => {
+                hasData = true;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #f8fafc;">${formatDisplayDate(r.start)} <span style="color:#64748b; margin: 0 5px;">&rarr;</span> ${formatDisplayDate(r.end)}</td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff; text-align: center; font-weight: bold;">${daysBetween(r.start, r.end)}</td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05);"><span style="color: #94a3b8; font-size: 11px;">Type: ${r.type}</span></td>
+                    <td style="padding: 12px 15px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #cbd5e1;">${r.note || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            if (hasData) {
+                document.getElementById('leaveReportSubtitle').innerText = `${emp.Name} - All Exceptions (Exact match not found)`;
+            }
+        }
+
+        if (hasData) {
+            tbody.parentElement.style.display = 'table';
+            emptyState.style.display = 'none';
+        } else {
+            tbody.parentElement.style.display = 'none';
+            emptyState.style.display = 'block';
+            emptyState.innerText = "No records found for this employee.";
+        }
+
+        document.getElementById('leaveReportModal').style.display = 'flex';
+    }
 </script>
 
 </body>
