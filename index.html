@@ -4249,14 +4249,18 @@ body.app-loaded #splash-screen {
                 }
             });
 
-            if (activeLeave && !isWorking) {
-                const activeEnd = parseDate(activeLeave.end).getTime();
-                const daysDiff = Math.floor((todayNum - activeEnd) / (1000 * 3600 * 24));
-                
-                if (daysDiff > 0) {
-                    lateEmployees.push({ emp: e, days: daysDiff, leaveEnd: activeLeave.end });
-                } else if (daysDiff === -1 || daysDiff === 0) {
-                    returningSoon.push({ emp: e, days: Math.abs(daysDiff), leaveEnd: activeLeave.end });
+            if (activeLeave && !isWorking && activeLeave.end) {
+                const parsedEnd = parseDate(activeLeave.end);
+                if (parsedEnd.getFullYear() >= 2000) {
+                    const activeEnd = parsedEnd.getTime();
+                    const daysDiff = Math.floor((todayNum - activeEnd) / (1000 * 3600 * 24));
+                    
+                    // Only show late returns for recently ended leaves (up to 90 days) to avoid historical anomalies
+                    if (daysDiff > 0 && daysDiff <= 90) {
+                        lateEmployees.push({ emp: e, days: daysDiff, leaveEnd: activeLeave.end });
+                    } else if (daysDiff === -1 || daysDiff === 0) {
+                        returningSoon.push({ emp: e, days: Math.abs(daysDiff), leaveEnd: activeLeave.end });
+                    }
                 }
             }
         });
