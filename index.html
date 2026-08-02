@@ -4282,7 +4282,7 @@ body.app-loaded #splash-screen {
                     <i class="fas fa-clock" style="font-size: 18px; color: #f59e0b;"></i>
                     <div style="flex: 1;">
                         <strong style="color: #f59e0b; display: block; margin-bottom: 4px;">Returning Soon (${returningSoon.length})</strong>
-                        <div style="font-size: 13px;">${returningSoon.map(r => `<b>${r.emp.Name}</b> (in ${r.days} days)`).join(' • ')}</div>
+                        <div style="font-size: 13px;">${returningSoon.map(r => `<b>${r.emp.Name}</b> (${r.days === 0 ? 'leave ends today' : (r.days === 1 ? 'leave ends tomorrow' : 'leave ends in ' + r.days + ' days')})`).join(' • ')}</div>
                     </div>
                 </div>`;
             }
