@@ -4428,9 +4428,9 @@ body.app-loaded #splash-screen {
                 
                 if (start === targetDate) {
                     const duration = daysBetween(r.start, r.end);
-                    if (r.type === 'work') {
+                    if (['work', 'standby_cover'].includes(r.type)) {
                         arrivals.push({ emp, duration, end: r.end });
-                    } else if (r.type === 'leave' || r.type === 'rest') {
+                    } else if (['leave', 'rest', 'annual_leave', 'sick_leave', 'emergency_leave', 'unpaid_leave'].includes(r.type)) {
                         departures.push({ emp, duration, end: r.end, type: r.type });
                     }
                 }
@@ -4486,7 +4486,7 @@ body.app-loaded #splash-screen {
                 <td data-label="Destination">📍 ${d.emp.Destination || 'Unknown'}</td>
                 <td data-label="Remarks">
                     <div style="font-size: 13px; color: rgba(255,255,255,0.7);">
-                        🗓️ ${d.type === 'leave' ? 'Leave' : 'Rest'}: ${d.duration} ${d.duration !== 'N/A' ? 'days' : ''}<br>
+                        🗓️ ${d.type === 'work' ? 'Work' : (d.type === 'rest' ? 'Rest' : (d.type === 'annual_leave' ? 'Annual Leave' : (d.type === 'sick_leave' ? 'Sick Leave' : (d.type === 'emergency_leave' ? 'Emergency Leave' : (d.type === 'unpaid_leave' ? 'Unpaid Leave' : 'Leave')))))}: ${d.duration} ${d.duration !== 'N/A' ? 'days' : ''}<br>
                         ${d.end !== 'N/A' ? `<span style="font-size: 11px; opacity: 0.7;">(until ${d.end})</span><br>` : ''}
                         ${d.emp.note ? `<span style="color: #f59e0b; font-weight: 600;">📝 Note: ${d.emp.note}</span>` : ''}
                     </div>
