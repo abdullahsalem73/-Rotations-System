@@ -619,7 +619,7 @@ select.inline-input { max-width: 90px; cursor: pointer; }
     #themeToggleBtn { position: absolute; top: -5px; right: 0; box-shadow: none !important; }
     
     /* App-like Bottom Navigation Bar */
-    body { padding-bottom: 80px; } /* Leave space for bottom nav */
+    body { padding-bottom: 150px; } /* Leave space for bottom nav */
     .tabs-nav {
         position: fixed;
         bottom: 0;
@@ -845,18 +845,35 @@ select.inline-input { max-width: 90px; cursor: pointer; }
         margin-left: 5px !important;
     }
     .magic-pill-btn {
-        width: 38px;
-        height: 38px;
-        padding: 0 !important;
-        border-radius: 50% !important;
+        padding: 6px 12px !important;
+        border-radius: 30px !important;
+        font-size: 12px !important;
         flex-shrink: 0;
     }
     .magic-pill-btn .pill-text {
-        display: none !important;
+        display: inline-block !important;
     }
     .magic-pill-btn i {
-        margin: 0 !important;
-        font-size: 16px;
+        font-size: 13px !important;
+        margin-right: 5px !important;
+    }
+    .action-pills {
+        gap: 6px !important;
+        padding-left: 8px !important;
+        margin-left: 5px !important;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .search-magic-bar {
+        padding: 10px !important;
+        border-radius: 20px !important;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .search-magic-bar input {
+        width: 100%;
+        text-align: center;
+        margin-bottom: 5px;
     }
 }
 
@@ -882,7 +899,7 @@ select.inline-input { max-width: 90px; cursor: pointer; }
 }
 .fab-btn:active { transform: scale(0.95); }
 @media (max-width: 768px) {
-    .fab-btn { display: flex; }
+    .fab-btn { display: flex; bottom: 95px; }
 }
         @media print {
             body { background: white; color: black; }
@@ -1232,7 +1249,7 @@ document.addEventListener('click', function(e) {
 
     /* AI Chat Panel */
     .ai-fab {
-        bottom: 20px;
+        bottom: 95px;
         left: 20px;
         width: 50px;
         height: 50px;
@@ -1241,7 +1258,7 @@ document.addEventListener('click', function(e) {
     .ai-chat-panel {
         width: calc(100% - 40px);
         left: 20px;
-        bottom: 80px;
+        bottom: 155px;
         height: 450px;
     }
     
@@ -2307,8 +2324,10 @@ body.app-loaded #splash-screen {
                 
                 <!-- Yearly Timeline Heatmap (Gantt) -->
                 <div id="yearlyTimelineContainer" style="margin-top: 15px; padding: 15px; background: rgba(15, 23, 42, 0.4); border-radius: 12px; border: 1px solid var(--glass-border); width: 100%; display: none;">
-                    <div style="font-size: 13px; font-weight: 600; margin-bottom: 10px; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px;">📅 Yearly Attendance Timeline (Current Year)</div>
-                    <div id="yearlyTimelineGrid" style="display: flex; gap: 2px; width: 100%;"></div>
+                    <div style="font-size: 13px; font-weight: 600; margin-bottom: 10px; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px;">📅 Yearly Attendance Timeline (Current Year) <span style="font-size: 10px; color: #64748b; font-weight: normal; margin-left: 10px;">👉 Swipe to scroll</span></div>
+                    <div style="width: 100%; overflow-x: auto; padding-bottom: 5px; scroll-behavior: smooth;">
+                        <div id="yearlyTimelineGrid" style="display: flex; gap: 2px; min-width: max-content;"></div>
+                    </div>
                     <div style="display: flex; gap: 10px; margin-top: 10px; font-size: 11px; color: #94a3b8; align-items: center; justify-content: flex-end; flex-wrap: wrap;">
                         <span style="display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:10px; height:10px; background:#10b981; border-radius:2px;"></span> Work</span>
                         <span style="display:flex; align-items:center; gap:4px;"><span style="display:inline-block; width:10px; height:10px; background:#3b82f6; border-radius:2px;"></span> Annual</span>
@@ -2326,7 +2345,7 @@ body.app-loaded #splash-screen {
             <div class="input-row">
                 <div class="input-group search">
                     <label>🔍 Smart Search (Rotations) </label>
-                    <input type="text" id="rotationSearchInput" placeholder="Search by type, date, or cycle..." oninput="renderTable()">
+                    <input type="search" id="rotationSearchInput" placeholder="Search by type, date, or cycle..." oninput="renderTable()">
                 </div>
             </div>
         </div>
@@ -2394,7 +2413,7 @@ body.app-loaded #splash-screen {
         <div class="search-magic-bar custom-glass-panel" style="display: flex; align-items: center; border-radius: 50px; padding: 6px 10px 6px 20px; margin-bottom: 25px; transition: all 0.3s ease;">
             <!-- Search Icon & Input -->
             <i class="fas fa-search" style="color: var(--primary); font-size: 18px; margin-right: 12px; filter: drop-shadow(0 0 5px rgba(255, 123, 0, 0.5));"></i>
-            <input type="text" id="searchInput" placeholder="Smart Search: Name, ID, Company..." oninput="filterEmployees()" style="flex: 1; background: transparent; border: none; color: var(--text-main); font-size: 15px; outline: none; padding: 8px 0; min-width: 100px;">
+            <input type="search" id="searchInput" placeholder="Smart Search: Name, ID, Company..." oninput="filterEmployees()" style="flex: 1; background: transparent; border: none; color: var(--text-main); font-size: 15px; outline: none; padding: 8px 0; min-width: 100px;">
             
             <!-- Actions Section -->
             <div class="action-pills" style="display: flex; align-items: center; gap: 8px; border-left: 1px solid var(--glass-border); padding-left: 12px; margin-left: 10px;">
@@ -2410,6 +2429,9 @@ body.app-loaded #splash-screen {
                 </button>
             </div>
         </div>
+
+        <!-- Smart Alerts Panel -->
+        <div id="smartAlertsContainer" style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 10px;"></div>
 
         <div class="table-wrapper">
             <table>
@@ -3806,9 +3828,7 @@ body.app-loaded #splash-screen {
             const start = parseDate(r.start);
             const end = parseDate(r.end);
             for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-                if (d.getFullYear() === currentYear) {
-                    daysMap.set(d.toISOString().split('T')[0], r.type);
-                }
+                daysMap.set(d.toISOString().split('T')[0], r.type);
             }
         });
         
@@ -3817,13 +3837,49 @@ body.app-loaded #splash-screen {
             const start = parseDate(r.start);
             const end = parseDate(r.end);
             for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-                if (d.getFullYear() === currentYear) {
-                    const dateStr = d.toISOString().split('T')[0];
-                    // Base rotations only claim days that haven't been claimed by an exception
-                    if (!daysMap.has(dateStr)) {
-                        daysMap.set(dateStr, r.type);
-                    }
+                const dateStr = d.toISOString().split('T')[0];
+                // Base rotations only claim days that haven't been claimed by an exception
+                if (!daysMap.has(dateStr)) {
+                    daysMap.set(dateStr, r.type);
                 }
+            }
+        });
+
+        // Determine cutoff date: from first entry to the end of the current rotation period
+        let cutoffDate = new Date().toISOString().split('T')[0]; // fallback to today
+        const sortedBase = records.filter(r => !r.isOverride).sort((a,b) => parseDate(a.start) - parseDate(b.start));
+        
+        let foundActive = false;
+        for (let i = 0; i < sortedBase.length; i++) {
+             const r = sortedBase[i];
+             if (r.start <= cutoffDate && r.end >= cutoffDate) {
+                 foundActive = true;
+                 cutoffDate = r.end;
+                 // If currently in a work period, include the corresponding paired leave/rest period to balance
+                 if (r.type === 'work' && i + 1 < sortedBase.length) {
+                     const next = sortedBase[i+1];
+                     if (next.type === 'leave' || next.type === 'annual_leave' || next.type === 'rest') {
+                         cutoffDate = next.end;
+                     }
+                 }
+                 break;
+             }
+        }
+        
+        if (!foundActive) {
+             const past = sortedBase.filter(r => r.end < cutoffDate);
+             if (past.length > 0) {
+                 cutoffDate = past[past.length - 1].end;
+             }
+        }
+
+        // Count totals from the very beginning up to the calculated cutoff date
+        daysMap.forEach((type, dateStr) => {
+            if (dateStr <= cutoffDate) {
+                if (type === 'work') { w++; }
+                else if (type === 'leave' || type === 'annual_leave') { l++; }
+                else if (type === 'sick_leave') { sl++; }
+                else if (type === 'emergency_leave' || type === 'unpaid_leave') { el++; }
             }
         });
         
@@ -3842,16 +3898,56 @@ body.app-loaded #splash-screen {
                 
                 let color = 'rgba(255, 255, 255, 0.05)';
                 
-                // Count and color
-                if (type === 'work') { w++; color = '#10b981'; }
-                else if (type === 'leave' || type === 'annual_leave') { l++; color = '#3b82f6'; }
-                else if (type === 'sick_leave') { sl++; color = '#8b5cf6'; }
-                else if (type === 'emergency_leave' || type === 'unpaid_leave') { el++; color = '#ef4444'; }
+                // Color mapping
+                if (type === 'work') { color = '#10b981'; }
+                else if (type === 'leave' || type === 'annual_leave') { color = '#3b82f6'; }
+                else if (type === 'sick_leave') { color = '#8b5cf6'; }
+                else if (type === 'emergency_leave' || type === 'unpaid_leave') { color = '#ef4444'; }
                 else if (type === 'rest') { color = 'rgba(255, 255, 255, 0.1)'; } // Rest days get slightly lighter grey
                 
                 const block = document.createElement('div');
-                block.style.cssText = `flex: 1; min-width: 2px; height: 30px; background-color: ${color}; border-radius: 1px;`;
+                block.style.cssText = `flex: 1; min-width: 2px; height: 30px; background-color: ${color}; border-radius: 1px; cursor: pointer; transition: transform 0.1s;`;
                 block.title = `${dateStr}: ${type}`;
+                
+                block.onmouseover = () => block.style.transform = 'scale(1.5)';
+                block.onmouseout = () => block.style.transform = 'scale(1)';
+                
+                block.onclick = function() {
+                    if (type === 'none') {
+                        Swal.fire('No Data', `Date: ${dateStr}<br>No attendance record.`, 'question');
+                        return;
+                    }
+                    
+                    // Find the matching rotation record for this date
+                    const matchingRecord = records.find(r => r.start <= dateStr && r.end >= dateStr && (!r.isOverride || daysMap.get(dateStr) === r.type));
+                    
+                    if (matchingRecord) {
+                        const days = daysBetween(matchingRecord.start, matchingRecord.end);
+                        let typeLabel = matchingRecord.type;
+                        let iconType = 'info';
+                        
+                        if(typeLabel === 'work') { typeLabel = '💼 Work Duty (فترة دوام)'; iconType = 'success'; }
+                        else if(typeLabel === 'leave' || typeLabel === 'annual_leave') { typeLabel = '✈️ Annual Leave (إجازة سنوية)'; iconType = 'info'; }
+                        else if(typeLabel === 'sick_leave') { typeLabel = '🤒 Sick Leave (إجازة مرضية)'; iconType = 'warning'; }
+                        else if(typeLabel === 'emergency_leave' || typeLabel === 'unpaid_leave') { typeLabel = '🚨 Emergency/Unpaid (طوارئ)'; iconType = 'error'; }
+                        else if(typeLabel === 'rest') { typeLabel = '☕ Rest (فترة راحة)'; iconType = 'info'; }
+                        
+                        Swal.fire({
+                            title: typeLabel,
+                            html: `<div style="text-align: left; background: rgba(0,0,0,0.05); padding: 15px; border-radius: 10px; margin-top: 10px;">
+                                   <div style="margin-bottom: 8px;"><b>Start Date:</b> <span style="float: right;" dir="ltr">${formatDisplayDate(matchingRecord.start)}</span></div>
+                                   <div style="margin-bottom: 8px;"><b>End Date:</b> <span style="float: right;" dir="ltr">${formatDisplayDate(matchingRecord.end)}</span></div>
+                                   <div><b>Duration:</b> <strong style="float: right; color: var(--primary);">${days} Days</strong></div>
+                                   </div>`,
+                            confirmButtonText: 'OK',
+                            confirmButtonColor: 'var(--primary)'
+                        });
+                    } else {
+                        // Fallback if it's an overridden day that doesn't cleanly match one single record block
+                        Swal.fire('Info', `<b>Date:</b> ${dateStr}<br><b>Type:</b> ${type}`, 'info');
+                    }
+                };
+                
                 timelineGrid.appendChild(block);
             }
         }
@@ -4127,6 +4223,68 @@ body.app-loaded #splash-screen {
         const d = new Date();
         const todayStr = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
         const todayNum = parseDate(todayStr).getTime();
+
+        // ------------------ SMART ALERTS LOGIC ------------------
+        let lateEmployees = [];
+        let returningSoon = [];
+
+        filteredEmployees.forEach(e => {
+            if (!e.Rotations) return;
+            let activeLeave = null;
+            let isWorking = false;
+            
+            e.Rotations.forEach(r => {
+                const rStart = parseDate(r.start).getTime();
+                const rEnd = parseDate(r.end).getTime();
+                
+                if (r.type === 'leave' || r.type === 'annual_leave' || r.type === 'sick_leave' || r.type === 'emergency_leave' || r.type === 'unpaid_leave') {
+                    if (todayNum >= rStart) {
+                        activeLeave = r; 
+                    }
+                }
+                if (r.type === 'work' || r.type === 'standby_cover') {
+                    if (todayNum >= rStart && todayNum <= rEnd) {
+                        isWorking = true;
+                    }
+                }
+            });
+
+            if (activeLeave && !isWorking) {
+                const activeEnd = parseDate(activeLeave.end).getTime();
+                const daysDiff = Math.floor((todayNum - activeEnd) / (1000 * 3600 * 24));
+                
+                if (daysDiff > 0) {
+                    lateEmployees.push({ emp: e, days: daysDiff, leaveEnd: activeLeave.end });
+                } else if (daysDiff === -1 || daysDiff === 0) {
+                    returningSoon.push({ emp: e, days: Math.abs(daysDiff), leaveEnd: activeLeave.end });
+                }
+            }
+        });
+
+        const alertsContainer = document.getElementById('smartAlertsContainer');
+        if (alertsContainer) {
+            let alertsHtml = '';
+            if (lateEmployees.length > 0) {
+                alertsHtml += `<div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #fca5a5; padding: 12px 15px; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 18px; color: #ef4444;"></i>
+                    <div style="flex: 1;">
+                        <strong style="color: #ef4444; display: block; margin-bottom: 4px;">Late Returns (${lateEmployees.length})</strong>
+                        <div style="font-size: 13px;">${lateEmployees.map(l => `<b>${l.emp.Name}</b> (${l.days} days late)`).join(' • ')}</div>
+                    </div>
+                </div>`;
+            }
+            if (returningSoon.length > 0) {
+                alertsHtml += `<div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.3); color: #fcd34d; padding: 12px 15px; border-radius: 8px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-clock" style="font-size: 18px; color: #f59e0b;"></i>
+                    <div style="flex: 1;">
+                        <strong style="color: #f59e0b; display: block; margin-bottom: 4px;">Returning Soon (${returningSoon.length})</strong>
+                        <div style="font-size: 13px;">${returningSoon.map(r => `<b>${r.emp.Name}</b> (in ${r.days} days)`).join(' • ')}</div>
+                    </div>
+                </div>`;
+            }
+            alertsContainer.innerHTML = alertsHtml;
+        }
+        // --------------------------------------------------------
 
         pagedEmployees.forEach(e => {
             let totalWork = 0;
