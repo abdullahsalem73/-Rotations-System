@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hr-rotations-cache-v19';
+const CACHE_NAME = 'hr-rotations-cache-v17';
 const urlsToCache = [
   './employees.js',
   'https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap',
