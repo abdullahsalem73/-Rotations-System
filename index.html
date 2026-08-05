@@ -786,7 +786,6 @@ select.inline-input { max-width: 90px; cursor: pointer; }
     .header-section img { height: 50px !important; width: 50px !important; }
     .header-section h1 { font-size: 20px !important; align-items: center !important; }
     .header-section h1 > div:last-child { font-size: 11px !important; text-align: center; }
-    #themeToggleBtn { position: absolute; top: -5px; right: 0; box-shadow: none !important; }
     
     /* App-like Bottom Navigation Bar */
     body { padding-bottom: 150px; } /* Leave space for bottom nav */
@@ -2501,6 +2500,35 @@ body.app-loaded #splash-screen {
             }
             .tab-icon { font-size: 20px !important; line-height: 1 !important; }
             .tab-label { font-size: 8px !important; line-height: 1.1 !important; text-align: center !important; white-space: nowrap !important; color: inherit !important; font-weight: 600 !important; }
+        }
+
+        /* Mobile tweaks for header */
+        @media (max-width: 768px) {
+            .smart-header { 
+                align-items: center; 
+                margin-top: 5px; 
+            }
+            /* In mobile, we stack the title to the left, and let the right side breathe */
+            .hdr-title h1 { font-size: 16px; }
+            
+            .hdr-right { 
+                /* Put clock and icons side-by-side in mobile too */
+                flex-direction: row; 
+                align-items: center; 
+                gap: 8px; 
+                flex-wrap: wrap; /* allow wrap if very small screen */
+                justify-content: flex-end;
+            }
+            .hdr-icons-row { gap: 6px; }
+            
+            /* Make the clock slightly smaller on mobile to fit nicely */
+            #sysClockText { 
+                padding: 4px 10px !important; 
+                font-size: 11px !important; 
+            }
+            .hdr-icon-btn {
+                width: 32px; height: 32px; font-size: 14px;
+            }
         }
 
         /* Desktop: buttons side by side */
