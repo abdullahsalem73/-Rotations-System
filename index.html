@@ -13,6 +13,8 @@
     <link rel="manifest" href="manifest.json">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://npmcdn.com/flatpickr/dist/themes/dark.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="js/forms_engine.js" defer></script>
     <style>
 
 :root {
@@ -2417,11 +2419,16 @@ body.app-loaded #splash-screen {
         .hdr-title h1 {
             margin: 0; font-size: 18px; font-weight: 800;
             line-height: 1.15;
+            display: block; /* Override global flex to allow truncation */
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .hdr-title h1 .gradient-text {
+            display: inline;
         }
         .hdr-title .subtitle {
             font-size: 9.5px; font-weight: 600; color: var(--text-muted);
             text-transform: uppercase; letter-spacing: 1px;
+            display: block;
             white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
 
@@ -2516,10 +2523,10 @@ body.app-loaded #splash-screen {
                 flex-direction: row; 
                 align-items: center; 
                 gap: 8px; 
-                flex-wrap: wrap; /* allow wrap if very small screen */
+                flex-wrap: nowrap; /* Force one line, let title shrink */
                 justify-content: flex-end;
             }
-            .hdr-icons-row { gap: 6px; }
+            .hdr-icons-row { gap: 6px; flex-wrap: nowrap; }
             
             /* Make the clock slightly smaller on mobile to fit nicely */
             #sysClockText { 
@@ -2642,6 +2649,9 @@ body.app-loaded #splash-screen {
         </button>
         <button class="tab-btn" id="auditTabBtn" onclick="switchTab('audit')" style="display: none;">
             <span class="tab-icon">📜</span><span class="tab-label">Audit Logs</span>
+        </button>
+        <button class="tab-btn" id="formsHubTabBtn" onclick="switchTab('formsHub')">
+            <span class="tab-icon">📝</span><span class="tab-label">Forms Hub</span>
         </button>
         <button class="dock-pin-btn" id="dockPinBtn" title="Pin Dock" onclick="toggleDockPin()"></button>
     </div>
@@ -3160,6 +3170,38 @@ body.app-loaded #splash-screen {
                     </thead>
                     <tbody id="auditTableBody">
                         <tr><td colspan="4" style="text-align:center;">Loading logs...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🌟 Forms Hub Tab -->
+    <div id="formsHub-tab" class="tab-pane">
+        <div class="card" style="margin-bottom: 25px;">
+            <h2 class="gradient-text" style="margin-top: 0;">📝 Forms & Document Hub</h2>
+            <p style="color: var(--text-muted); margin-bottom: 15px;">Digital HR Forms and Workflow Engine.</p>
+            
+            <div id="forms-categories-grid" class="stats-grid">
+                <!-- Categories will be rendered here by JS -->
+            </div>
+        </div>
+
+        <div class="card">
+            <h3 style="margin-top: 0; color: white;">📋 My Requests & Submissions</h3>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ref #</th>
+                            <th>Form Title</th>
+                            <th>Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="forms-requests-tbody">
+                        <!-- User requests rendered here by JS -->
                     </tbody>
                 </table>
             </div>

@@ -185,12 +185,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function appendMessage(text, sender, id = null) {
         const msgDiv = document.createElement('div');
-        msgDiv.className = \`ai-message \${sender}\`;
+        msgDiv.className = `ai-message ${sender}`;
         if (id) msgDiv.id = id;
         
         // Handle markdown-like line breaks
-        msgDiv.innerHTML = text.replace(/\\n/g, '<br/>');
+        msgDiv.innerHTML = text.replace(/\n/g, '<br/>');
         
+        if (/[\u0600-\u06FF]/.test(text)) {
+            msgDiv.style.direction = 'rtl';
+            msgDiv.style.textAlign = 'right';
+        } else {
+            msgDiv.style.direction = 'ltr';
+            msgDiv.style.textAlign = 'left';
+        }
+
         body.appendChild(msgDiv);
         body.scrollTop = body.scrollHeight;
         return msgDiv;
@@ -245,7 +253,18 @@ document.addEventListener('DOMContentLoaded', () => {
                             const parsed = JSON.parse(dataStr);
                             if (parsed.text) {
                                 aiFullText += parsed.text;
-                                responseDiv.innerHTML = aiFullText.replace(/\\n/g, '<br/>');
+                                
+                                aiFullText = aiFullText.replace(/عظون/g, 'ازهون');
+
+                                if (/[\u0600-\u06FF]/.test(aiFullText)) {
+                                    responseDiv.style.direction = 'rtl';
+                                    responseDiv.style.textAlign = 'right';
+                                } else {
+                                    responseDiv.style.direction = 'ltr';
+                                    responseDiv.style.textAlign = 'left';
+                                }
+
+                                responseDiv.innerHTML = aiFullText.replace(/\n/g, '<br/>');
                                 body.scrollTop = body.scrollHeight;
                             }
                         } catch (e) {

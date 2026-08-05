@@ -72,7 +72,7 @@ const EMPLOYEE_DATA = [
         "end": "2026-09-29"
       },
       {
-        "id": "rot_12",
+        "id": "rot_244",
         "type": "leave",
         "start": "2026-09-30",
         "end": "2026-10-27"
@@ -3329,91 +3329,91 @@ const EMPLOYEE_DATA = [
         "id": "rot_496",
         "type": "work",
         "start": "2025-10-11",
-        "end": "2025-11-05"
-      },
-      {
-        "id": "rot_497",
-        "type": "leave",
-        "start": "2025-11-06",
-        "end": "2025-12-05"
-      },
-      {
-        "id": "rot_498",
-        "type": "work",
-        "start": "2025-12-06",
-        "end": "2026-01-04"
-      },
-      {
-        "id": "rot_499",
-        "type": "leave",
-        "start": "2026-01-05",
-        "end": "2026-02-03"
-      },
-      {
-        "id": "rot_500",
-        "type": "work",
-        "start": "2026-02-04",
-        "end": "2026-03-03"
-      },
-      {
-        "id": "rot_501",
-        "type": "leave",
-        "start": "2026-03-04",
-        "end": "2026-03-31"
-      },
-      {
-        "id": "rot_502",
-        "type": "work",
-        "start": "2026-04-01",
-        "end": "2026-04-21"
-      },
-      {
-        "id": "rot_503",
-        "type": "leave",
-        "start": "2026-04-22",
-        "end": "2026-05-12"
+        "end": "2025-11-06"
       },
       {
         "id": "rot_504",
+        "type": "leave",
+        "start": "2025-11-07",
+        "end": "2025-12-05"
+      },
+      {
+        "id": "rot_497",
         "type": "work",
-        "start": "2026-05-13",
-        "end": "2026-06-09"
+        "start": "2025-12-06",
+        "end": "2026-01-05"
       },
       {
         "id": "rot_505",
         "type": "leave",
-        "start": "2026-06-10",
-        "end": "2026-07-07"
+        "start": "2026-01-06",
+        "end": "2026-02-03"
+      },
+      {
+        "id": "rot_498",
+        "type": "work",
+        "start": "2026-02-04",
+        "end": "2026-03-04"
       },
       {
         "id": "rot_506",
+        "type": "leave",
+        "start": "2026-03-05",
+        "end": "2026-03-31"
+      },
+      {
+        "id": "rot_499",
         "type": "work",
-        "start": "2026-07-08",
-        "end": "2026-08-04"
+        "start": "2026-04-01",
+        "end": "2026-04-22"
       },
       {
         "id": "rot_507",
         "type": "leave",
-        "start": "2026-08-05",
-        "end": "2026-09-01"
+        "start": "2026-04-23",
+        "end": "2026-05-12"
+      },
+      {
+        "id": "rot_500",
+        "type": "work",
+        "start": "2026-05-13",
+        "end": "2026-06-10"
       },
       {
         "id": "rot_508",
+        "type": "leave",
+        "start": "2026-06-11",
+        "end": "2026-07-07"
+      },
+      {
+        "id": "rot_501",
         "type": "work",
-        "start": "2026-09-02",
-        "end": "2026-09-29"
+        "start": "2026-07-08",
+        "end": "2026-08-05"
       },
       {
         "id": "rot_509",
         "type": "leave",
-        "start": "2026-09-30",
-        "end": "2026-10-27"
+        "start": "2026-08-06",
+        "end": "2026-09-01"
+      },
+      {
+        "id": "rot_502",
+        "type": "work",
+        "start": "2026-09-02",
+        "end": "2026-09-30"
       },
       {
         "id": "rot_510",
+        "type": "leave",
+        "start": "2026-10-01",
+        "end": "2026-10-27"
+      },
+      {
+        "id": "rot_503",
         "type": "work",
         "start": "2026-10-28",
-        "end": "2026-11-24"
+        "end": "2026-11-25"
       }
     ]
   },
@@ -3510,9 +3510,9 @@ const EMPLOYEE_DATA = [
     ]
   },
   {
-    "ID": "132",
+    "ID": "224",
     "Name": "Aboud Karamah Shaikh Al-Zubidi",
-    "Company": "PetroMasila-BLK53",
+    "Company": "PetroMasila - BLK53",
     "Department": "Maintenance",
     "Rotations": [
       {
@@ -3712,114 +3712,114 @@ const EMPLOYEE_DATA = [
     ]
   },
   {
-    "ID": "244",
+    "ID": "132",
     "Name": "Mansour Salem Mohammed Al-Akbari",
-    "Company": "PetroMasila-BLK53",
+    "Company": "PetroMasila - BLK53",
     "Department": "Maintenance",
     "Rotations": [
-      {
-        "id": "rot_556",
-        "type": "work",
-        "start": "2025-11-09",
-        "end": "2025-12-06"
-      },
-      {
-        "id": "rot_557",
-        "type": "leave",
-        "start": "2025-12-07",
-        "end": "2026-01-05"
-      },
-      {
-        "id": "rot_558",
-        "type": "work",
-        "start": "2026-01-06",
-        "end": "2026-02-04"
-      },
-      {
-        "id": "rot_559",
-        "type": "leave",
-        "start": "2026-02-05",
-        "end": "2026-03-04"
-      },
-      {
-        "id": "rot_560",
-        "type": "work",
-        "start": "2026-03-05",
-        "end": "2026-04-01"
-      },
-      {
-        "id": "rot_561",
-        "type": "leave",
-        "start": "2026-04-02",
-        "end": "2026-04-22"
-      },
-      {
-        "id": "rot_562",
-        "type": "work",
-        "start": "2026-04-23",
-        "end": "2026-05-13"
-      },
-      {
-        "id": "rot_563",
-        "type": "leave",
-        "start": "2026-05-14",
-        "end": "2026-06-10"
-      },
-      {
-        "id": "rot_564",
-        "type": "work",
-        "start": "2026-06-11",
-        "end": "2026-07-08"
-      },
-      {
-        "id": "rot_565",
-        "type": "leave",
-        "start": "2026-07-09",
-        "end": "2026-08-05"
-      },
-      {
-        "id": "rot_566",
-        "type": "work",
-        "start": "2026-08-06",
-        "end": "2026-09-02"
-      },
-      {
-        "id": "rot_567",
-        "type": "leave",
-        "start": "2026-09-03",
-        "end": "2026-09-30"
-      },
-      {
-        "id": "rot_568",
-        "type": "work",
-        "start": "2026-10-01",
-        "end": "2026-10-28"
-      },
-      {
-        "id": "rot_569",
-        "type": "leave",
-        "start": "2026-10-29",
-        "end": "2026-11-25"
-      },
-      {
-        "id": "rot_570",
-        "type": "work",
-        "start": "2026-11-26",
-        "end": "2026-12-23"
-      },
-      {
-        "id": "rot_571",
-        "type": "leave",
-        "start": "2026-12-24",
-        "end": "2027-01-20"
-      },
-      {
-        "id": "rot_572",
-        "type": "work",
-        "start": "2027-01-21",
-        "end": "2027-02-18"
-      }
-    ]
+  {
+    "id": "rot_1785870124373_0",
+    "type": "work",
+    "start": "2025-11-08",
+    "end": "2025-12-06"
+  },
+  {
+    "id": "rot_1785870124373_1",
+    "type": "leave",
+    "start": "2025-12-07",
+    "end": "2026-01-05"
+  },
+  {
+    "id": "rot_1785870124373_2",
+    "type": "work",
+    "start": "2026-01-05",
+    "end": "2026-02-04"
+  },
+  {
+    "id": "rot_1785870124373_3",
+    "type": "leave",
+    "start": "2026-02-05",
+    "end": "2026-03-04"
+  },
+  {
+    "id": "rot_1785870124373_4",
+    "type": "work",
+    "start": "2026-03-04",
+    "end": "2026-04-01"
+  },
+  {
+    "id": "rot_1785870124373_5",
+    "type": "leave",
+    "start": "2026-04-02",
+    "end": "2026-04-22"
+  },
+  {
+    "id": "rot_1785870124373_6",
+    "type": "work",
+    "start": "2026-04-22",
+    "end": "2026-05-13"
+  },
+  {
+    "id": "rot_1785870124373_7",
+    "type": "leave",
+    "start": "2026-05-14",
+    "end": "2026-06-10"
+  },
+  {
+    "id": "rot_1785870124373_8",
+    "type": "work",
+    "start": "2026-06-10",
+    "end": "2026-07-08"
+  },
+  {
+    "id": "rot_1785870124373_9",
+    "type": "leave",
+    "start": "2026-07-09",
+    "end": "2026-08-05"
+  },
+  {
+    "id": "rot_1785870124373_10",
+    "type": "work",
+    "start": "2026-08-05",
+    "end": "2026-09-02"
+  },
+  {
+    "id": "rot_1785870124373_11",
+    "type": "leave",
+    "start": "2026-09-03",
+    "end": "2026-09-30"
+  },
+  {
+    "id": "rot_1785870124373_12",
+    "type": "work",
+    "start": "2026-09-30",
+    "end": "2026-10-28"
+  },
+  {
+    "id": "rot_1785870124373_13",
+    "type": "leave",
+    "start": "2026-10-29",
+    "end": "2026-11-25"
+  },
+  {
+    "id": "rot_1785870124373_14",
+    "type": "work",
+    "start": "2026-11-25",
+    "end": "2026-12-23"
+  },
+  {
+    "id": "rot_1785870124373_15",
+    "type": "leave",
+    "start": "2026-12-24",
+    "end": "2027-01-20"
+  },
+  {
+    "id": "rot_1785870124373_16",
+    "type": "work",
+    "start": "2027-01-20",
+    "end": "2027-02-18"
+  }
+]
   },
   {
     "ID": "191",
@@ -5342,9 +5342,9 @@ const EMPLOYEE_DATA = [
     ]
   },
   {
-    "ID": "101",
+    "ID": "1019",
     "Name": "Zaid Naji Al-Jaberi",
-    "Company": "PetroMasila-BLK53",
+    "Company": "PetroMasila - BLK53",
     "Department": "Operations",
     "Rotations": [
       {
@@ -5832,10 +5832,11 @@ const EMPLOYEE_DATA = [
     ]
   },
   {
-    "ID": "246",
+    "ID": "217",
     "Name": "Mohammed Omar Al-Tamemi",
     "Company": "PetroMasila-BLK53",
     "Department": "Operations",
+    "B2B_Alternate": "247",
     "Rotations": [
       {
         "id": "rot_880",
@@ -5946,6 +5947,7 @@ const EMPLOYEE_DATA = [
     "Name": "Suleman Omar Al-Tamemi",
     "Company": "PetroMasila-BLK53",
     "Department": "Operations",
+    "B2B_Alternate": "217",
     "Rotations": [
       {
         "id": "rot_897",
@@ -7226,3 +7228,5 @@ const EMPLOYEE_DATA = [
     ]
   }
 ];
+
+window.EMPLOYEE_DATA = EMPLOYEE_DATA;

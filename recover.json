@@ -1,0 +1,664 @@
+[
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Remove hardcoded overrides for Mansour (ID 132) and Aboud (ID 224) from index.html",
+      "EndLine": 4345,
+      "Instruction": "Remove the old ID overrides for Mansour (132) and Aboud (224) since the CSV is fixed and the old ID 132 should be deleted",
+      "ReplacementContent": "",
+      "StartLine": 4337,
+      "TargetContent": "                        } else if (emp.Name === \"Mansour Salem Mohammed Al-Akbari\") {\n                            emp.ID = \"132\";\n                            emp.Company = \"PetroMasila - BLK53\";\n                            zaidChanged = true;\n                        } else if (emp.Name === \"Aboud Karamah Shaikh Al-Zubidi\") {\n                            emp.ID = \"224\";\n                            emp.Company = \"PetroMasila - BLK53\";\n                            zaidChanged = true;\n                        }",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Removing hardcoded overrides",
+      "toolSummary": "Remove ID overrides"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Remove hardcoded Zaid and Aref overrides from index.html",
+      "EndLine": 4351,
+      "Instruction": "Remove the entire HOTFIX block that overrides Zaid and Aref",
+      "ReplacementContent": "                    // Removed HOTFIX overrides\n                } catch(e){",
+      "StartLine": 4329,
+      "TargetContent": "                    // HOTFIX: Update Zaid Naji Al-Jaberi\n                    let zaidChanged = false;\n                    let arefExists = false;\n                    localData.forEach(emp => {\n                        if (emp.Name === \"Zaid Naji Al-Jaberi\") {\n                            emp.ID = \"1019\";\n                            emp.Company = \"PetroMasila - BLK53\";\n                            zaidChanged = true;\n\n                        if (emp.Name === \"Aref Awadh Salem Ba Wazeer\") {\n                            arefExists = true;\n                        }\n                    });\n                    if (!arefExists && typeof EMPLOYEE_DATA !== 'undefined') {\n                        const aref = EMPLOYEE_DATA.find(e => e.Name === \"Aref Awadh Salem Ba Wazeer\");\n                        if (aref) {\n                            localData.push(aref);\n                            zaidChanged = true;\n                        }\n                    }\n                    if (zaidChanged) {\n                        localStorage.setItem('hrEmployeesData', JSON.stringify(localData));\n                    }\n                } catch (e) {",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Removing hardcoded Zaid and Aref overrides",
+      "toolSummary": "Remove hotfix index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Fix syntax error in index.html",
+      "EndLine": 4339,
+      "Instruction": "Fix the syntax error caused by incomplete replace",
+      "ReplacementContent": "                    localData = JSON.parse(stored);\n                }",
+      "StartLine": 4328,
+      "TargetContent": "                    localData = JSON.parse(stored);\n                    });\n                    if (!arefExists && typeof EMPLOYEE_DATA !== 'undefined') {\n                        const aref = EMPLOYEE_DATA.find(e => e.Name === \"Aref Awadh Salem Ba Wazeer\");\n                        if (aref) {\n                            localData.push(aref);\n                            zaidChanged = true;\n                        }\n                    }\n                    if (zaidChanged) {\n                        localStorage.setItem('hrEmployeesData', JSON.stringify(localData));\n                    }",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Fixing syntax error in index.html",
+      "toolSummary": "Fix syntax error index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Remove extra brace",
+      "EndLine": 4331,
+      "Instruction": "Remove extra brace",
+      "ReplacementContent": "                if (stored) {\n                    localData = JSON.parse(stored);\n                }\n                else if (typeof EMPLOYEE_DATA !== 'undefined') localData = EMPLOYEE_DATA;",
+      "StartLine": 4327,
+      "TargetContent": "                if (stored) {\n                    localData = JSON.parse(stored);\n                }\n                }\n                else if (typeof EMPLOYEE_DATA !== 'undefined') localData = EMPLOYEE_DATA;",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Removing extra brace in index.html",
+      "toolSummary": "Remove extra brace"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Add Rotation Pattern to Edit Modal",
+      "EndLine": 7387,
+      "Instruction": "Add Rotation Pattern field to Edit Employee Modal",
+      "ReplacementContent": "        <div class=\"modal-field\">\n            <label>Phone Number</label>\n            <input type=\"text\" id=\"editEmpPhone\" placeholder=\"e.g. 05X-XXXXXXX\">\n        </div>\n\n        <div class=\"modal-field\">\n            <label>⚙️ Rotation Pattern</label>\n            <select id=\"editEmpPattern\" style=\"width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main);\">\n                <option value=\"28/28\">28 Work / 28 Leave (Standard)</option>\n                <option value=\"28/14\">28 Work / 14 Leave</option>\n                <option value=\"Timesheet\">Timesheet (Manual / Daily Wage)</option>\n            </select>\n        </div>",
+      "StartLine": 7384,
+      "TargetContent": "        <div class=\"modal-field\">\n            <label>Phone Number</label>\n            <input type=\"text\" id=\"editEmpPhone\" placeholder=\"e.g. 05X-XXXXXXX\">\n        </div>",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Adding Rotation Pattern to Edit Modal",
+      "toolSummary": "Edit Modal index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Update openEditEmployeeModal to include RotationPattern",
+      "EndLine": 6441,
+      "Instruction": "Include editEmpPattern in modal open",
+      "ReplacementContent": "        document.getElementById('editEmpPhone').value = emp.Phone || '';\n        document.getElementById('editEmpPattern').value = emp.RotationPattern || '28/28';\n        \n        populateB2BDatalist('editEmpB2B', emp.ID);\n        if (emp.B2B_Alternate) {\n            const alt = employees.find(e => String(e.ID) === String(emp.B2B_Alternate));\n            document.getElementById('editEmpB2B').value = alt ? `${alt.ID} - ${alt.Name}` : emp.B2B_Alternate;\n        } else {\n            document.getElementById('editEmpB2B').value = '';\n        }\n        \n        document.getElementById('editEmpNotes').value = emp.Notes || '';",
+      "StartLine": 6429,
+      "TargetContent": "        document.getElementById('editEmpPhone').value = emp.Phone || '';\n        \n        populateB2BDatalist('editEmpB2B', emp.ID);\n        if (emp.B2B_Alternate) {\n            const alt = employees.find(e => String(e.ID) === String(emp.B2B_Alternate));\n            document.getElementById('editEmpB2B').value = alt ? `${alt.ID} - ${alt.Name}` : emp.B2B_Alternate;\n        } else {\n            document.getElementById('editEmpB2B').value = '';\n        }\n        \n        document.getElementById('editEmpNotes').value = emp.Notes || '';\n\n",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Adding editEmpPattern to openEditEmployeeModal",
+      "toolSummary": "Edit openEdit index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Update saveEditEmployee to save RotationPattern",
+      "EndLine": 6472,
+      "Instruction": "Save editEmpPattern value to emp.RotationPattern",
+      "ReplacementContent": "        emp.Destination = dest || 'N/A';\n        emp.Phone = phone || '';\n        emp.RotationPattern = document.getElementById('editEmpPattern').value;\n        emp.Notes = document.getElementById('editEmpNotes').value.trim();",
+      "StartLine": 6470,
+      "TargetContent": "        emp.Destination = dest || 'N/A';\n        emp.Phone = phone || '';\n        emp.Notes = document.getElementById('editEmpNotes').value.trim();",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Adding RotationPattern save logic",
+      "toolSummary": "Edit saveEdit index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Add Rotation Pattern to Add Modal",
+      "EndLine": 6390,
+      "Instruction": "Add editEmpPattern to Add Modal",
+      "ReplacementContent": "        <div class=\"modal-field\">\n            <label>Phone Number</label>\n            <input type=\"text\" id=\"newEmpPhone\" placeholder=\"e.g. 05X-XXXXXXX\">\n        </div>\n\n        <div class=\"modal-field\">\n            <label>⚙️ Rotation Pattern</label>\n            <select id=\"newEmpPattern\" style=\"width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main);\">\n                <option value=\"28/28\">28 Work / 28 Leave (Standard)</option>\n                <option value=\"28/14\">28 Work / 14 Leave</option>\n                <option value=\"Timesheet\">Timesheet (Manual / Daily Wage)</option>\n            </select>\n        </div>",
+      "StartLine": 6387,
+      "TargetContent": "        <div class=\"modal-field\">\n            <label>Phone Number</label>\n            <input type=\"text\" id=\"newEmpPhone\" placeholder=\"e.g. 05X-XXXXXXX\">\n        </div>",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Adding Rotation Pattern to Add Modal",
+      "toolSummary": "Edit Add Modal index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Update saveNewEmployee to read newEmpPattern",
+      "EndLine": 6302,
+      "Instruction": "Save RotationPattern for new employee",
+      "ReplacementContent": "            B2B_Alternate: b2b || null,\n            profilePic: profilePicData,\n            Rotations: [],\n            DayNightShift: dayNightShift,\n            RotationPattern: document.getElementById('newEmpPattern').value\n        };",
+      "StartLine": 6298,
+      "TargetContent": "            B2B_Alternate: b2b || null,\n            profilePic: profilePicData,\n            Rotations: [],\n            DayNightShift: dayNightShift\n        };",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Adding RotationPattern to saveNewEmployee",
+      "toolSummary": "Edit saveNew index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Include rotation_agent.js and trigger it once on load",
+      "EndLine": 4361,
+      "Instruction": "Include the agent script execution in onSnapshot",
+      "ReplacementContent": "            filteredEmployees = [...employees];\n            if (document.readyState === 'complete' || document.readyState === 'interactive') {\n                initEmployees();\n                initCharts();\n                if (typeof filterEmployees === 'function') filterEmployees();\n                if (typeof detectConflicts === 'function') detectConflicts();\n                \n                // Run Intelligent Rotation Agent exactly once per session\n                if (!window.hasRotationAgentRun && typeof runIntelligentRotationAgent === 'function') {\n                    window.hasRotationAgentRun = true;\n                    runIntelligentRotationAgent();\n                }\n            }\n        }\n    });",
+      "StartLine": 4353,
+      "TargetContent": "            filteredEmployees = [...employees];\n            if (document.readyState === 'complete' || document.readyState === 'interactive') {\n                initEmployees();\n                initCharts();\n                if (typeof filterEmployees === 'function') filterEmployees();\n                if (typeof detectConflicts === 'function') detectConflicts();\n            }\n        }\n    });",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Adding agent execution to onSnapshot",
+      "toolSummary": "Edit onSnapshot index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Include rotation_agent.js in index.html",
+      "EndLine": 10452,
+      "Instruction": "Include rotation_agent.js script before body close",
+      "ReplacementContent": "    <!-- Rotation Agent -->\n    <script src=\"scripts/rotation_agent.js\"></script>\n</body>",
+      "StartLine": 10452,
+      "TargetContent": "</body>",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Adding script include to index.html",
+      "toolSummary": "Edit script include index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Add new rotation patterns to newEmpPattern dropdown",
+      "EndLine": 6394,
+      "Instruction": "Add 5/2, Visitor, and 365/0 patterns to newEmpPattern",
+      "ReplacementContent": "        <div class=\"modal-field\">\n            <label>⚙️ Rotation Pattern</label>\n            <select id=\"newEmpPattern\" style=\"width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main);\">\n                <option value=\"28/28\">28 Work / 28 Leave (Standard)</option>\n                <option value=\"28/14\">28 Work / 14 Leave</option>\n                <option value=\"14/14\">14 Work / 14 Leave</option>\n                <option value=\"5/2\">Office 5/2 (5 Work / 2 Leave)</option>\n                <option value=\"365/0\">Continuous (365 Work)</option>\n                <option value=\"Visitor\">Visitor (Temporary)</option>\n                <option value=\"Timesheet\">Timesheet (Manual / Daily Wage)</option>\n            </select>\n        </div>",
+      "StartLine": 6389,
+      "TargetContent": "        <div class=\"modal-field\">\n            <label>⚙️ Rotation Pattern</label>\n            <select id=\"newEmpPattern\" style=\"width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main);\">\n                <option value=\"28/28\">28 Work / 28 Leave (Standard)</option>\n                <option value=\"28/14\">28 Work / 14 Leave</option>\n                <option value=\"Timesheet\">Timesheet (Manual / Daily Wage)</option>\n            </select>\n        </div>",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Updating newEmpPattern options",
+      "toolSummary": "Update Add dropdown index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Add new rotation patterns to editEmpPattern dropdown",
+      "EndLine": 7415,
+      "Instruction": "Add 5/2, Visitor, and 365/0 patterns to editEmpPattern",
+      "ReplacementContent": "            <select id=\"editEmpPattern\" style=\"width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main);\">\n                <option value=\"28/28\">28 Work / 28 Leave (Standard)</option>\n                <option value=\"28/14\">28 Work / 14 Leave</option>\n                <option value=\"14/14\">14 Work / 14 Leave</option>\n                <option value=\"5/2\">Office 5/2 (5 Work / 2 Leave)</option>\n                <option value=\"365/0\">Continuous (365 Work)</option>\n                <option value=\"Visitor\">Visitor (Temporary)</option>\n                <option value=\"Timesheet\">Timesheet (Manual / Daily Wage)</option>\n            </select>",
+      "StartLine": 7411,
+      "TargetContent": "            <select id=\"editEmpPattern\" style=\"width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main);\">\n                <option value=\"28/28\">28 Work / 28 Leave (Standard)</option>\n                <option value=\"28/14\">28 Work / 14 Leave</option>\n                <option value=\"Timesheet\">Timesheet (Manual / Daily Wage)</option>\n            </select>",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Updating editEmpPattern options",
+      "toolSummary": "Update Edit dropdown index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Rename 28/28 to B2B and 28/14 to 2/1 in addEmp modal",
+      "EndLine": 6402,
+      "Instruction": "Update option text for 28/28 and 28/14 in newEmpPattern",
+      "ReplacementContent": "            <select id=\"newEmpPattern\" style=\"width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main);\">\n                <option value=\"28/28\">B2B (28 Work / 28 Leave)</option>\n                <option value=\"28/14\">2/1 (28 Work / 14 Leave)</option>",
+      "StartLine": 6399,
+      "TargetContent": "            <select id=\"newEmpPattern\" style=\"width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main);\">\n                <option value=\"28/28\">28 Work / 28 Leave (Standard)</option>\n                <option value=\"28/14\">28 Work / 14 Leave</option>",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Renaming newEmpPattern options",
+      "toolSummary": "Edit Add dropdown labels index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Rename 28/28 to B2B and 28/14 to 2/1 in editEmp modal",
+      "EndLine": 7414,
+      "Instruction": "Update option text for 28/28 and 28/14 in editEmpPattern",
+      "ReplacementContent": "            <select id=\"editEmpPattern\" style=\"width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main);\">\n                <option value=\"28/28\">B2B (28 Work / 28 Leave)</option>\n                <option value=\"28/14\">2/1 (28 Work / 14 Leave)</option>\n                <option value=\"14/14\">14 Work / 14 Leave</option>",
+      "StartLine": 7411,
+      "TargetContent": "            <select id=\"editEmpPattern\" style=\"width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--glass-border); background: var(--input-bg); color: var(--text-main);\">\n                <option value=\"28/28\">28 Work / 28 Leave (Standard)</option>\n                <option value=\"28/14\">28 Work / 14 Leave</option>\n                <option value=\"14/14\">14 Work / 14 Leave</option>",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Renaming editEmpPattern options",
+      "toolSummary": "Edit Edit dropdown labels index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": true,
+      "Description": "Rename 5/2 option to Office Pattern (5/2)",
+      "EndLine": 7420,
+      "Instruction": "Update option text for 5/2",
+      "ReplacementContent": "                <option value=\"5/2\">Office Pattern (5/2)</option>",
+      "StartLine": 6390,
+      "TargetContent": "                <option value=\"5/2\">Office 5/2 (5 Work / 2 Leave)</option>",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Renaming 5/2 option",
+      "toolSummary": "Edit 5/2 index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Update magicAutoBuild to support new rotation patterns",
+      "EndLine": 3672,
+      "Instruction": "Rewrite magicAutoBuild html dropdown and js logic to support all patterns",
+      "ReplacementContent": "                   <select id=\"magicPattern\" style=\"width:100%; padding:10px; border-radius:8px; border:1px solid var(--glass-border); background:var(--input-bg); color:var(--text-main); outline:none;\">\n                       <option value=\"28/28\">B2B (28 Work / 28 Leave)</option>\n                       <option value=\"28/14\">2/1 (28 Work / 14 Leave)</option>\n                       <option value=\"14/14\">14 Work / 14 Leave</option>\n                       <option value=\"5/2\">Office Pattern (5/2)</option>\n                       <option value=\"365/0\">Continuous (365 Work)</option>\n                   </select>`,\n            background: 'var(--card-bg)',\n            color: 'var(--text-main)',\n            showCancelButton: true,\n            confirmButtonText: '✨ Generate Now',\n            confirmButtonColor: '#8b5cf6',\n            preConfirm: () => {\n                return {\n                    start: document.getElementById('magicStartDate').value,\n                    pattern: document.getElementById('magicPattern').value\n                }\n            }\n        }).then((res) => {\n            if(res.isConfirmed && res.value.start) {\n                let currentStart = parseDate(res.value.start);\n                let patternVal = res.value.pattern;\n                \n                let workDays = 28;\n                let leaveDays = 28;\n                let isContinuous = false;\n                \n                if (patternVal === \"28/14\") { workDays = 28; leaveDays = 14; }\n                else if (patternVal === \"14/14\") { workDays = 14; leaveDays = 14; }\n                else if (patternVal === \"5/2\") { workDays = 5; leaveDays = 2; }\n                else if (patternVal === \"365/0\") { workDays = 365; leaveDays = 0; isContinuous = true; }\n\n                // Generate approximately 1 year of rotations\n                let targetDate = new Date(currentStart);\n                targetDate.setFullYear(targetDate.getFullYear() + 1);\n\n                while (currentStart < targetDate) {\n                    // 1. Add Work period\n                    let endD = new Date(currentStart);\n                    endD.setDate(endD.getDate() + workDays - 1);\n                    \n                    records.push({\n                        id: 'magic_' + Date.now() + '_' + Math.random().toString(36).substr(2,5),\n                        type: 'work',\n                        start: formatDateRaw(currentStart),\n                        end: formatDateRaw(endD)\n                    });\n                    \n                    if (!isContinuous) {\n                        // 2. Add Leave period\n                        let leaveStart = new Date(endD);\n                        leaveStart.setDate(leaveStart.getDate() + 1);\n                        let leaveEnd = new Date(leaveStart);\n                        leaveEnd.setDate(leaveEnd.getDate() + leaveDays - 1);\n                        \n                        records.push({\n                            id: 'magic_' + Date.now() + '_' + Math.random().toString(36).substr(2,5),\n                            type: 'leave',\n                            start: formatDateRaw(leaveStart),\n                            end: formatDateRaw(leaveEnd)\n                        });\n                        \n                        // Set currentStart for next iteration\n                        currentStart = new Date(leaveEnd);\n                        currentStart.setDate(currentStart.getDate() + 1);\n                    } else {\n                        // If continuous, next block is also work, directly after\n                        currentStart = new Date(endD);\n                        currentStart.setDate(currentStart.getDate() + 1);\n                    }\n                }",
+      "StartLine": 3636,
+      "TargetContent": "                   <select id=\"magicPattern\" style=\"width:100%; padding:10px; border-radius:8px; border:1px solid var(--glass-border); background:var(--input-bg); color:var(--text-main); outline:none;\">\n                       <option value=\"28\">28 Work / 28 Leave (PetroMasila Standard)</option>\n                       <option value=\"14\">14 Work / 14 Leave</option>\n                   </select>`,\n            background: 'var(--card-bg)',\n            color: 'var(--text-main)',\n            showCancelButton: true,\n            confirmButtonText: '✨ Generate Now',\n            confirmButtonColor: '#8b5cf6',\n            preConfirm: () => {\n                return {\n                    start: document.getElementById('magicStartDate').value,\n                    pattern: parseInt(document.getElementById('magicPattern').value)\n                }\n            }\n        }).then((res) => {\n            if(res.isConfirmed && res.value.start) {\n                let currentStart = parseDate(res.value.start);\n                let duration = res.value.pattern;\n                // Generate 12 periods (6 work + 6 leave)\n                for(let i = 0; i < 12; i++) {\n                    let type = (i % 2 === 0) ? 'work' : 'leave';\n                    \n                    let endD = new Date(currentStart);\n                    endD.setDate(endD.getDate() + duration - 1);\n                    \n                    records.push({\n                        id: 'magic_' + Date.now() + '_' + i,\n                        type: type,\n                        start: formatDateRaw(currentStart),\n                        end: formatDateRaw(endD)\n                    });\n                    \n                    // next period starts day after\n                    currentStart = new Date(endD);\n                    currentStart.setDate(currentStart.getDate() + 1);\n                }",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Updating magicAutoBuild dropdown and logic",
+      "toolSummary": "Update magicAutoBuild index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Fix duplication bug in loadData and saveData",
+      "EndLine": 3428,
+      "Instruction": "Update loadData and saveData to filter out Overrides from Rotations array",
+      "ReplacementContent": "        if (selectedEmployeeId) {\n            const emp = employees.find(e => String(e.ID) === String(selectedEmployeeId));\n            if (emp) {\n                // Ensure we don't save overrides into the permanent Rotations array\n                emp.Rotations = records.filter(r => !r.isOverride);\n                db.collection(\"employees\").doc(String(emp.ID)).set(emp).catch(e => console.error(\"Firebase sync error\", e));\n            }\n        } else {\n            db.collection(\"system\").doc(\"general_rotations\").set({ records: records.filter(r => !r.isOverride) });\n        }",
+      "StartLine": 3421,
+      "TargetContent": "        if (selectedEmployeeId) {\n            const emp = employees.find(e => String(e.ID) === String(selectedEmployeeId));\n            if (emp) {\n                emp.Rotations = records;\n                db.collection(\"employees\").doc(String(emp.ID)).set(emp).catch(e => console.error(\"Firebase sync error\", e));\n            }\n        } else {\n            db.collection(\"system\").doc(\"general_rotations\").set({ records: records });\n        }",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Fixing saveData duplicate override bug",
+      "toolSummary": "Fix saveData index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Self-heal duplicate overrides in loadData",
+      "EndLine": 3366,
+      "Instruction": "Update loadData to filter out corrupted overrides from Rotations array when loading",
+      "ReplacementContent": "            // Clean up any accidentally saved overrides from the permanent Rotations array\n            records = emp && emp.Rotations ? emp.Rotations.filter(r => !r.isOverride) : [];",
+      "StartLine": 3366,
+      "TargetContent": "            records = emp && emp.Rotations ? [...emp.Rotations] : [];",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Self-healing duplicates in loadData",
+      "toolSummary": "Update loadData index.html"
+    }
+  },
+  {
+    "name": "multi_replace_file_content",
+    "args": {
+      "Description": "Fix ADD_NEW behavior for dropdowns so they save correctly and appear in front of the modal",
+      "Instruction": "Add custom sets for new departments/companies/destinations so they persist before saving, and ensure Swal popup has the highest z-index.",
+      "ReplacementChunks": [
+        {
+          "AllowMultiple": false,
+          "EndLine": 4450,
+          "ReplacementContent": "    let customCompanies = new Set();\n    let customDestinations = new Set();\n    let customDepartments = new Set();\n\n    function populateCompanyAndDestDropdowns() {\n        const companies = new Set(customCompanies);\n        const destinations = new Set(customDestinations);\n        const departments = new Set([\"Operations\", \"IT\", \"HSE\", \"Maintenance\", \"Management\", \"HR\", \"Finance\", \"Logistics\", \"ESP\", ...customDepartments]);\n\n        employees.forEach(e => {\n            if (e.Company && e.Company !== 'N/A') companies.add(e.Company);\n            if (e.Destination && e.Destination !== 'N/A') destinations.add(e.Destination);\n            if (e.Department && e.Department !== 'N/A') departments.add(e.Department);\n        });\n\n        // Add predefined companies\n        const predefinedCompanies = [\"Salsala\", \"Al-Lord\", \"Al-Tamimi\", \"Petroneer\", \"Bin Hader\", \"Bahesabi\", \"Ibn Mubarak\", \"HCCC\"];\n        predefinedCompanies.forEach(c => companies.add(c));\n\n        // Predefined Destinations (geographic regions only)\n        const predefinedDestinations = [\"Seiyoun\", \"Mukalla\", \"Al Shihr\", \"Sah\", \"Al Radood\", \"Rawk\", \"Hikmah\", \"Ba'alal\", \"Sharyoof\", \"Al Gharaf\", \"Tarim\", \"Wadi Bin Ali\", \"Tamran\", \"Al Qatn\", \"Shibam\", \"Tarbah\", \"Block 14\", \"Block 10\", \"Block 51\", \"Labnah\"];\n        predefinedDestinations.forEach(d => destinations.add(d));",
+          "StartLine": 4431,
+          "TargetContent": "    function populateCompanyAndDestDropdowns() {\n        const companies = new Set();\n        const destinations = new Set();\n\n        employees.forEach(e => {\n            if (e.Company && e.Company !== 'N/A') companies.add(e.Company);\n            if (e.Destination && e.Destination !== 'N/A') destinations.add(e.Destination);\n        });\n\n        // Add predefined companies\n        const predefinedCompanies = [\"Salsala\", \"Al-Lord\", \"Al-Tamimi\", \"Petroneer\", \"Bin Hader\", \"Bahesabi\", \"Ibn Mubarak\", \"HCCC\"];\n        predefinedCompanies.forEach(c => companies.add(c));\n\n        // Predefined Destinations (geographic regions only)\n        const predefinedDestinations = [\"Seiyoun\", \"Mukalla\", \"Al Shihr\", \"Sah\", \"Al Radood\", \"Rawk\", \"Hikmah\", \"Ba'alal\", \"Sharyoof\", \"Al Gharaf\", \"Tarim\", \"Wadi Bin Ali\", \"Tamran\", \"Al Qatn\", \"Shibam\", \"Tarbah\", \"Block 14\", \"Block 10\", \"Block 51\", \"Labnah\"];\n        predefinedDestinations.forEach(d => destinations.add(d));\n\n        // Predefined Departments (job departments only)\n        const predefinedDepartments = [\"Operations\", \"IT\", \"HSE\", \"Maintenance\", \"Management\", \"HR\", \"Finance\", \"Logistics\", \"ESP\"];"
+        },
+        {
+          "AllowMultiple": false,
+          "EndLine": 4456,
+          "ReplacementContent": "        const sortedCompanies = Array.from(companies).sort();\n        const sortedDestinations = Array.from(destinations).sort();\n        const sortedDepartments = Array.from(departments).sort();\n\n        const companyOptions = `<option value=\"\">Select...</option>` + sortedCompanies.map(c => `<option value=\"${c}\">${c}</option>`).join('') + `<option value=\"ADD_NEW\" style=\"font-weight:bold;color:#f9a826;\">+ أضف جديد (Add New...)</option>`;\n        const destOptions = `<option value=\"\">Select...</option>` + sortedDestinations.map(d => `<option value=\"${d}\">${d}</option>`).join('') + `<option value=\"ADD_NEW\" style=\"font-weight:bold;color:#f9a826;\">+ أضف جديد (Add New...)</option>`;\n        const deptOptions = `<option value=\"\">Select...</option>` + sortedDepartments.map(d => `<option value=\"${d}\">${d}</option>`).join('') + `<option value=\"ADD_NEW\" style=\"font-weight:bold;color:#f9a826;\">+ أضف جديد (Add New...)</option>`;",
+          "StartLine": 4451,
+          "TargetContent": "        const sortedCompanies = Array.from(companies).sort();\n        const sortedDestinations = Array.from(destinations).sort();\n\n        const companyOptions = `<option value=\"\">Select...</option>` + sortedCompanies.map(c => `<option value=\"${c}\">${c}</option>`).join('') + `<option value=\"ADD_NEW\" style=\"font-weight:bold;color:#f9a826;\">+ أضف جديد (Add New...)</option>`;\n        const destOptions = `<option value=\"\">Select...</option>` + sortedDestinations.map(d => `<option value=\"${d}\">${d}</option>`).join('') + `<option value=\"ADD_NEW\" style=\"font-weight:bold;color:#f9a826;\">+ أضف جديد (Add New...)</option>`;\n        const deptOptions = `<option value=\"\">Select...</option>` + predefinedDepartments.map(d => `<option value=\"${d}\">${d}</option>`).join('') + `<option value=\"ADD_NEW\" style=\"font-weight:bold;color:#f9a826;\">+ أضف جديد (Add New...)</option>`;"
+        },
+        {
+          "AllowMultiple": false,
+          "EndLine": 4514,
+          "ReplacementContent": "    function handleSelectChange(selectEl, type) {\n        if (selectEl.value === 'ADD_NEW') {\n            Swal.fire({\n                title: type === 'company' ? 'أدخل اسم الشركة الجديدة' : (type === 'dest' ? 'أدخل الموقع الجديد' : 'أدخل اسم القسم الجديد'),\n                input: 'text',\n                showCancelButton: true,\n                confirmButtonText: 'إضافة',\n                cancelButtonText: 'إلغاء',\n                customClass: {\n                    container: 'high-z-index-swal'\n                },\n                didOpen: () => {\n                    // Force the SweetAlert popup to be above all modals!\n                    document.querySelector('.high-z-index-swal').style.setProperty('z-index', '999999', 'important');\n                }\n            }).then((result) => {\n                if (result.isConfirmed && result.value.trim() !== '') {\n                    const newVal = result.value.trim();\n                    if (type === 'company') {\n                        customCompanies.add(newVal);\n                    } else if (type === 'dest') {\n                        customDestinations.add(newVal);\n                    } else {\n                        customDepartments.add(newVal);\n                    }\n                    // Re-render the dropdowns immediately so the option appears natively across the app\n                    populateCompanyAndDestDropdowns();\n                    // Auto-select the newly added value\n                    selectEl.value = newVal;\n                } else {\n                    selectEl.value = '';\n                }\n            });\n        }\n    }",
+          "StartLine": 4493,
+          "TargetContent": "    function handleSelectChange(selectEl, type) {\n        if (selectEl.value === 'ADD_NEW') {\n            Swal.fire({\n                title: type === 'company' ? 'أدخل اسم الشركة الجديدة' : 'أدخل اسم القسم الجديد',\n                input: 'text',\n                showCancelButton: true,\n                confirmButtonText: 'إضافة',\n                cancelButtonText: 'إلغاء'\n            }).then((result) => {\n                if (result.isConfirmed && result.value.trim() !== '') {\n                    const newVal = result.value.trim();\n                    const opt = document.createElement('option');\n                    opt.value = newVal;\n                    opt.textContent = newVal;\n                    selectEl.insertBefore(opt, selectEl.lastElementChild);\n                    selectEl.value = newVal;\n                } else {\n                    selectEl.value = '';\n                }\n            });\n        }\n    }"
+        }
+      ],
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Fixing ADD_NEW bug and z-index",
+      "toolSummary": "Fix ADD_NEW index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Fix text alignment of B2B_Alternate name in employees table",
+      "EndLine": 5536,
+      "Instruction": "Add text-align: left and direction: ltr to the B2B_Alternate div",
+      "ReplacementContent": "                if (alt) {\n                    b2bHtml = `<div style=\"font-size: 10px; color: #10b981; margin-top: 4px; margin-left: 40px; text-align: left; direction: ltr;\" title=\"B2B Alternate\">🔄 ${alt.Name}</div>`;\n                }",
+      "StartLine": 5534,
+      "TargetContent": "                if (alt) {\n                    b2bHtml = `<div style=\"font-size: 10px; color: #10b981; margin-top: 2px; margin-left: 36px;\" title=\"B2B Alternate\">🔄 ${alt.Name}</div>`;\n                }",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Fixing alignment of B2B Alternate",
+      "toolSummary": "Fix alignment index.html"
+    }
+  },
+  {
+    "name": "multi_replace_file_content",
+    "args": {
+      "Description": "Fix Standby badge logic and add Standby (Suspended) exception type",
+      "Instruction": "Update missing status to show No Data, and map Standby to a new standby_suspended exception type.",
+      "ReplacementChunks": [
+        {
+          "AllowMultiple": false,
+          "EndLine": 5508,
+          "ReplacementContent": "            let statusBadge = `<div style=\"display:inline-flex; align-items:center; gap:6px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; background: rgba(148,163,184,0.1); color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); box-shadow: 0 0 10px rgba(148,163,184,0.1);\" title=\"Missing/Expired Rotation\">\n                <div style=\"width:6px; height:6px; border-radius:50%; background:#94a3b8; box-shadow: 0 0 8px #94a3b8;\"></div> No Data\n            </div>`;\n            if (currentStatus === 'standby_suspended') {\n                statusBadge = `<div style=\"display:inline-flex; align-items:center; gap:6px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); box-shadow: 0 0 10px rgba(245,158,11,0.1);\" title=\"Suspended by Management\">\n                    <div style=\"width:6px; height:6px; border-radius:50%; background:#f59e0b; box-shadow: 0 0 8px #f59e0b;\"></div> Standby\n                </div>`;\n            } else if (currentStatus === 'work' || currentStatus === 'standby_cover') {",
+          "StartLine": 5506,
+          "TargetContent": "            let statusBadge = `<div style=\"display:inline-flex; align-items:center; gap:6px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); box-shadow: 0 0 10px rgba(245,158,11,0.1);\" title=\"Missing/Expired Rotation\">\n                <div style=\"width:6px; height:6px; border-radius:50%; background:#f59e0b; box-shadow: 0 0 8px #f59e0b;\"></div> Standby\n            </div>`;\n            if (currentStatus === 'work' || currentStatus === 'standby_cover') {"
+        },
+        {
+          "AllowMultiple": false,
+          "EndLine": 6634,
+          "ReplacementContent": "                <option value=\"unpaid_leave\">Unpaid Leave (UL)</option>\n                <option value=\"standby_cover\">Standby Cover (SC)</option>\n                <option value=\"standby_suspended\">Standby (Suspended)</option>\n            </select>",
+          "StartLine": 6632,
+          "TargetContent": "                <option value=\"unpaid_leave\">Unpaid Leave (UL)</option>\n                <option value=\"standby_cover\">Standby Cover (SC)</option>\n            </select>"
+        },
+        {
+          "AllowMultiple": false,
+          "EndLine": 9900,
+          "ReplacementContent": "        let statusBadge = `<div style=\"display:inline-flex; align-items:center; gap:6px; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; background: rgba(148,163,184,0.1); color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); box-shadow: 0 0 15px rgba(148,163,184,0.15);\">\n            <div style=\"width:8px; height:8px; border-radius:50%; background:#94a3b8; box-shadow: 0 0 10px #94a3b8;\"></div> No Data\n        </div>`;\n        if (currentStatus === 'standby_suspended') {\n            statusBadge = `<div style=\"display:inline-flex; align-items:center; gap:6px; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); box-shadow: 0 0 15px rgba(245,158,11,0.15);\">\n                <div style=\"width:8px; height:8px; border-radius:50%; background:#f59e0b; box-shadow: 0 0 10px #f59e0b;\"></div> Standby (Suspended)\n            </div>`;\n        } else if (currentStatus === 'work' || currentStatus === 'standby_cover') {",
+          "StartLine": 9897,
+          "TargetContent": "        let statusBadge = `<div style=\"display:inline-flex; align-items:center; gap:6px; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); box-shadow: 0 0 15px rgba(245,158,11,0.15);\">\n            <div style=\"width:8px; height:8px; border-radius:50%; background:#f59e0b; box-shadow: 0 0 10px #f59e0b;\"></div> Standby (Missing Data)\n        </div>`;\n        if (currentStatus === 'work' || currentStatus === 'standby_cover') {"
+        }
+      ],
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Fixing Standby logic",
+      "toolSummary": "Fix Standby index.html"
+    }
+  },
+  {
+    "name": "multi_replace_file_content",
+    "args": {
+      "Description": "Replace STATUS column with avatar color rings",
+      "Instruction": "Update table headers and rendering logic to color avatar rings instead of showing a status badge column.",
+      "ReplacementChunks": [
+        {
+          "AllowMultiple": false,
+          "EndLine": 2640,
+          "ReplacementContent": "                        <th class=\"sortable\" onclick=\"sortEmployees('Department')\" id=\"sort-Department\">Department 🏢</th>\n                        <th class=\"sortable\" onclick=\"sortEmployees('Destination')\" id=\"sort-Destination\">Destination 📍</th>\n                        <th style=\"text-align:center;\">Ledger ⚖️</th>\n                        <th class=\"actions-col\" style=\"text-align:center;\">Actions ⚙️</th>",
+          "StartLine": 2636,
+          "TargetContent": "                        <th class=\"sortable\" onclick=\"sortEmployees('Department')\" id=\"sort-Department\">Department 💼</th>\n                        <th class=\"sortable\" onclick=\"sortEmployees('Destination')\" id=\"sort-Destination\">Destination 📍</th>\n                        <th class=\"sortable\" onclick=\"sortEmployees('Status')\" id=\"sort-Status\">Status 🟢</th>\n                        <th style=\"text-align:center;\">Ledger ⚖️</th>\n                        <th class=\"actions-col\" style=\"text-align:center;\">Actions ⚙️</th>"
+        },
+        {
+          "AllowMultiple": false,
+          "EndLine": 5580,
+          "ReplacementContent": "            let statusColor = '#94a3b8'; // default missing (gray)\n            let statusTooltip = 'Missing/Expired Rotation';\n            if (currentStatus === 'standby_suspended') {\n                statusColor = '#f59e0b'; // orange\n                statusTooltip = 'Suspended by Management';\n            } else if (currentStatus === 'work' || currentStatus === 'standby_cover') {\n                statusColor = '#10b981'; // green\n                statusTooltip = 'ON (At Work)';\n            } else if (currentStatus === 'leave' || currentStatus === 'rest') {\n                statusColor = '#ffffff'; // white\n                statusTooltip = 'OFF (On Leave)';\n            } else if (currentStatus === 'sick_leave') {\n                statusColor = '#ef4444'; // red\n                statusTooltip = 'SL (Sick Leave)';\n            }\n\n            let avatarStyle = `width: 28px; height: 28px; min-width: 28px; border-radius: 50%; vertical-align: middle; margin-right: 12px; border: 2px solid ${statusColor}; box-shadow: 0 0 10px ${statusColor};`;\n            let avatarHtml = '';\n            if (e.profilePic) {\n                avatarHtml = `<img src=\"${e.profilePic}\" style=\"${avatarStyle} object-fit: cover;\" title=\"${statusTooltip}\">`;\n            } else {\n                let initial = e.Name ? e.Name.charAt(0).toUpperCase() : '?';\n                avatarHtml = `<div style=\"display:inline-flex; ${avatarStyle} background: var(--glass-bg); align-items: center; justify-content: center; font-size: 13px; font-weight: bold; color: var(--text-muted);\" title=\"${statusTooltip}\">${initial}</div>`;\n            }\n\n            let b2bHtml = '';\n            if (e.B2B_Alternate) {\n                const alt = employees.find(emp => String(emp.ID) === String(e.B2B_Alternate));\n                if (alt) {\n                    b2bHtml = `<div style=\"font-size: 10px; color: #10b981; margin-top: 4px; margin-left: 45px; text-align: left; direction: ltr;\" title=\"B2B Alternate\">🔄 ${alt.Name}</div>`;\n                }\n            }\n\n            const ledger = calculateTimeLedger(e);\n            let ledgerHtml = `<div style=\"display:flex; gap: 6px; flex-wrap: wrap;\">\n                <div onclick=\"window.openLedgerBreakdown('${e.ID}')\" style=\"cursor: pointer; display:inline-flex; align-items:center; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; background: rgba(56, 189, 248, 0.1); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.2); box-shadow: 0 0 8px rgba(56, 189, 248, 0.1); transition: transform 0.2s;\" onmouseover=\"this.style.transform='scale(1.05)'\" onmouseout=\"this.style.transform='scale(1)'\" title=\"Magic Ledger Breakdown\">\n                    ⚖️ ${ledger.netOffDays} OFF\n                </div>`;\n            \n            if (ledger.companyDebt > 0) {\n                ledgerHtml += `<div style=\"display:inline-flex; align-items:center; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);\" title=\"Owed to Company\">\n                    🏢 -${ledger.companyDebt}\n                </div>`;\n            }\n            if (ledger.relieverDebt > 0) {\n                ledgerHtml += `<div style=\"display:inline-flex; align-items:center; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2);\" title=\"Owed to Reliever\">\n                    🔄 -${ledger.relieverDebt}\n                </div>`;\n            }\n            ledgerHtml += `</div>`;\n\n            html += `<tr>\n                <td data-label=\"ID\"><strong>${e.ID || '-'}</strong></td>\n                <td data-label=\"Name\" onclick=\"openProfileCard('${e.ID}')\" style=\"cursor: pointer; transition: all 0.2s;\" title=\"View Profile\">\n                    <div style=\"display:flex; align-items:center;\">${avatarHtml} <span style=\"font-weight: 500;\">${e.Name || '-'}${e.Shift === 'Night' || e.Shift === 'Day/Night' ? ' <span title=\"Night/Rotating Shift\" style=\"font-size:12px;\">🌙</span>' : ''}</span></div>\n                    ${b2bHtml}\n                </td>\n                <td data-label=\"Company\">🏢 ${e.Company || '-'}</td>\n                <td data-label=\"Department\">💼 ${e.Department || '-'}</td>\n                <td data-label=\"Destination\">📍 ${e.Destination || '-'}</td>\n                <td data-label=\"Ledger\">\n                    ${ledgerHtml}\n                </td>\n                <td data-label=\"Actions\" class=\"actions-col\" style=\"text-align:center; white-space: nowrap;\">\n                    <button class=\"btn btn-outline\" style=\"padding: 6px 12px; font-size: 13px; border-color: #f59e0b; color: #f59e0b; margin-right: 5px;\" onclick=\"openEditEmployeeModal('${e.ID}')\">Edit</button>\n                    <button class=\"btn btn-outline\" style=\"padding: 6px 12px; font-size: 13px;\" onclick=\"viewEmployeeRotations('${e.ID}')\">Rotations </button>\n                </td>\n            </tr>`;",
+          "StartLine": 5506,
+          "TargetContent": "            let statusBadge = `<div style=\"display:inline-flex; align-items:center; gap:6px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; background: rgba(148,163,184,0.1); color: #94a3b8; border: 1px solid rgba(148,163,184,0.2); box-shadow: 0 0 10px rgba(148,163,184,0.1);\" title=\"Missing/Expired Rotation\">\n                <div style=\"width:6px; height:6px; border-radius:50%; background:#94a3b8; box-shadow: 0 0 8px #94a3b8;\"></div> No Data\n            </div>`;\n            if (currentStatus === 'standby_suspended') {\n                statusBadge = `<div style=\"display:inline-flex; align-items:center; gap:6px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; background: rgba(245,158,11,0.1); color: #f59e0b; border: 1px solid rgba(245,158,11,0.2); box-shadow: 0 0 10px rgba(245,158,11,0.1);\" title=\"Suspended by Management\">\n                    <div style=\"width:6px; height:6px; border-radius:50%; background:#f59e0b; box-shadow: 0 0 8px #f59e0b;\"></div> Standby\n                </div>`;\n            } else if (currentStatus === 'work' || currentStatus === 'standby_cover') {\n                statusBadge = `<div style=\"display:inline-flex; align-items:center; gap:6px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.2); box-shadow: 0 0 10px rgba(16,185,129,0.1);\" title=\"ON (At Work)\">\n                    <div style=\"width:6px; height:6px; border-radius:50%; background:#10b981; box-shadow: 0 0 8px #10b981;\"></div> On Site\n                </div>`;\n            } else if (currentStatus === 'leave' || currentStatus === 'rest') {\n                statusBadge = `<div style=\"display:inline-flex; align-items:center; gap:6px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; background: rgba(255,255,255,0.1); color: #ffffff; border: 1px solid rgba(255,255,255,0.2);\" title=\"OFF (On Leave)\">\n                    <div style=\"width:6px; height:6px; border-radius:50%; background:#ffffff; box-shadow: 0 0 8px rgba(255,255,255,0.5);\"></div> Leave\n                </div>`;\n            } else if (currentStatus === 'sick_leave') {\n                statusBadge = `<div style=\"display:inline-flex; align-items:center; gap:6px; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; background: rgba(239,68,68,0.1); color: #ef4444; border: 1px solid rgba(239,68,68,0.2); box-shadow: 0 0 10px rgba(239,68,68,0.1);\" title=\"SL (Sick Leave)\">\n                    <div style=\"width:6px; height:6px; border-radius:50%; background:#ef4444; box-shadow: 0 0 8px #ef4444;\"></div> Sick Leave\n                </div>`;\n            }\n\n            let avatarHtml = '';\n            if (e.profilePic) {\n                avatarHtml = `<img src=\"${e.profilePic}\" style=\"width: 28px; height: 28px; border-radius: 50%; object-fit: cover; vertical-align: middle; margin-right: 8px; border: 1px solid var(--glass-border);\">`;\n            } else {\n                let initial = e.Name ? e.Name.charAt(0).toUpperCase() : '?';\n                avatarHtml = `<div style=\"display:inline-flex; width: 28px; height: 28px; border-radius: 50%; background: var(--glass-bg); border: 1px solid var(--glass-border); vertical-align: middle; margin-right: 8px; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; color: var(--text-muted);\">${initial}</div>`;\n            }\n\n            let b2bHtml = '';\n            if (e.B2B_Alternate) {\n                const alt = employees.find(emp => String(emp.ID) === String(e.B2B_Alternate));\n                if (alt) {\n                    b2bHtml = `<div style=\"font-size: 10px; color: #10b981; margin-top: 4px; margin-left: 40px; text-align: left; direction: ltr;\" title=\"B2B Alternate\">🔄 ${alt.Name}</div>`;\n                }\n            }\n\n            const ledger = calculateTimeLedger(e);\n            let ledgerHtml = `<div style=\"display:flex; gap: 6px; flex-wrap: wrap;\">\n                <div onclick=\"window.openLedgerBreakdown('${e.ID}')\" style=\"cursor: pointer; display:inline-flex; align-items:center; padding: 3px 8px; border-radius: 6px; font-size: 11px; font-weight: bold; background: rgba(56, 189, 248, 0.1); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.2); box-shadow: 0 0 8px rgba(56, 189, 248, 0.1); transition: transform 0.2s;\" onmouseover=\"this.style.transform='scale(1.05)'\" onmouseout=\"this.style.transform='scale(1)'\" title=\"Magic Ledger Breakdown\">\n                    ⚖️ ${ledger.netOffDays} OFF\n                </div>`;\n            \n            if (ledger.companyDebt > 0) {\n                ledgerHtml += `<div style=\"display:inline-flex; align-items:center; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);\" title=\"Owed to Company\">\n                    🏢 -${ledger.companyDebt}\n                </div>`;\n            }\n            if (ledger.relieverDebt > 0) {\n                ledgerHtml += `<div style=\"display:inline-flex; align-items:center; padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; background: rgba(245, 158, 11, 0.1); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.2);\" title=\"Owed to Reliever\">\n                    🔄 -${ledger.relieverDebt}\n                </div>`;\n            }\n            ledgerHtml += `</div>`;\n\n            html += `<tr>\n                <td data-label=\"ID\"><strong>${e.ID || '-'}</strong></td>\n                <td data-label=\"Name\" onclick=\"openProfileCard('${e.ID}')\" style=\"cursor: pointer; transition: all 0.2s;\" title=\"View Profile\">\n                    <div style=\"display:flex; align-items:center;\">${avatarHtml} <span style=\"font-weight: 500;\">${e.Name || '-'}${e.Shift === 'Night' || e.Shift === 'Day/Night' ? ' <span title=\"Night/Rotating Shift\" style=\"font-size:12px;\">🌙</span>' : ''}</span></div>\n                    ${b2bHtml}\n                </td>\n                <td data-label=\"Company\">🏢 ${e.Company || '-'}</td>\n                <td data-label=\"Department\">💼 ${e.Department || '-'}</td>\n                <td data-label=\"Destination\">📍 ${e.Destination || '-'}</td>\n                <td data-label=\"Status\">\n                    ${statusBadge}\n                </td>\n                <td data-label=\"Ledger\">\n                    ${ledgerHtml}\n                </td>\n                <td data-label=\"Actions\" class=\"actions-col\" style=\"text-align:center; white-space: nowrap;\">\n                    <button class=\"btn btn-outline\" style=\"padding: 6px 12px; font-size: 13px; border-color: #f59e0b; color: #f59e0b; margin-right: 5px;\" onclick=\"openEditEmployeeModal('${e.ID}')\">Edit</button>\n                    <button class=\"btn btn-outline\" style=\"padding: 6px 12px; font-size: 13px;\" onclick=\"viewEmployeeRotations('${e.ID}')\">Rotations </button>\n                </td>\n            </tr>`;"
+        }
+      ],
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Updating avatar border with status colors",
+      "toolSummary": "Update avatar styles index.html"
+    }
+  },
+  {
+    "name": "multi_replace_file_content",
+    "args": {
+      "Description": "Remove Destination column from main employees table",
+      "Instruction": "Remove Destination column headers and data cells from the main table render.",
+      "ReplacementChunks": [
+        {
+          "AllowMultiple": false,
+          "EndLine": 2636,
+          "ReplacementContent": "                        <th class=\"sortable\" onclick=\"sortEmployees('Company')\" id=\"sort-Company\">Company 🏢</th>\n                        <th class=\"sortable\" onclick=\"sortEmployees('Department')\" id=\"sort-Department\">Department 📍</th>\n                        <th style=\"text-align:center;\">Ledger ⚙️</th>",
+          "StartLine": 2634,
+          "TargetContent": "                        <th class=\"sortable\" onclick=\"sortEmployees('Company')\" id=\"sort-Company\">Company 🏢</th>\n                        <th class=\"sortable\" onclick=\"sortEmployees('Department')\" id=\"sort-Department\">Department 📍</th>\n                        <th class=\"sortable\" onclick=\"sortEmployees('Destination')\" id=\"sort-Destination\">Destination ⚖️</th>\n                        <th style=\"text-align:center;\">Ledger ⚙️</th>"
+        },
+        {
+          "AllowMultiple": false,
+          "EndLine": 5245,
+          "ReplacementContent": "        if (filteredEmployees.length === 0) {\n            tbody.innerHTML = `<tr><td colspan=\"5\"><div class=\"empty-state\"><div>🔍</div><h3>لا توجد نتائج</h3></div></td></tr>`;",
+          "StartLine": 5244,
+          "TargetContent": "        if (filteredEmployees.length === 0) {\n            tbody.innerHTML = `<tr><td colspan=\"6\"><div class=\"empty-state\"><div>🔍</div><h3>لا توجد نتائج</h3></div></td></tr>`;"
+        },
+        {
+          "AllowMultiple": false,
+          "EndLine": 5566,
+          "ReplacementContent": "                <td data-label=\"Company\">🏢 ${e.Company || '-'}</td>\n                <td data-label=\"Department\">💼 ${e.Department || '-'}</td>\n                <td data-label=\"Ledger\">",
+          "StartLine": 5564,
+          "TargetContent": "                <td data-label=\"Company\">🏢 ${e.Company || '-'}</td>\n                <td data-label=\"Department\">💼 ${e.Department || '-'}</td>\n                <td data-label=\"Destination\">📍 ${e.Destination || '-'}</td>\n                <td data-label=\"Ledger\">"
+        }
+      ],
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Removing Destination column",
+      "toolSummary": "Remove Destination column index.html"
+    }
+  },
+  {
+    "name": "multi_replace_file_content",
+    "args": {
+      "Description": "Implement Smart Cover Suggestions logic",
+      "Instruction": "Add coverSuggestions div, attach onchange events to date inputs, clear suggestions on modal open, and add suggestReplacements function.",
+      "ReplacementChunks": [
+        {
+          "AllowMultiple": false,
+          "EndLine": 6641,
+          "ReplacementContent": "        <div class=\"modal-field\" style=\"display: flex; gap: 10px;\">\n            <div style=\"flex:1;\">\n                <label>Start Date</label>\n                <input type=\"date\" id=\"excStart\" onchange=\"suggestReplacements()\">\n            </div>\n            <div style=\"flex:1;\">\n                <label>End Date</label>\n                <input type=\"date\" id=\"excEnd\" onchange=\"suggestReplacements()\">\n            </div>\n        </div>",
+          "StartLine": 6632,
+          "TargetContent": "        <div class=\"modal-field\" style=\"display: flex; gap: 10px;\">\n            <div style=\"flex:1;\">\n                <label>Start Date</label>\n                <input type=\"date\" id=\"excStart\">\n            </div>\n            <div style=\"flex:1;\">\n                <label>End Date</label>\n                <input type=\"date\" id=\"excEnd\">\n            </div>\n        </div>"
+        },
+        {
+          "AllowMultiple": false,
+          "EndLine": 6655,
+          "ReplacementContent": "        <div class=\"modal-field\">\n            <label>Replacement Employee ID (Optional)</label>\n            <input type=\"text\" id=\"excReplacementId\" placeholder=\"e.g. 1002\">\n            <div id=\"coverSuggestions\" style=\"margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;\"></div>\n        </div>",
+          "StartLine": 6652,
+          "TargetContent": "        <div class=\"modal-field\">\n            <label>Replacement Employee ID (Optional)</label>\n            <input type=\"text\" id=\"excReplacementId\" placeholder=\"e.g. 1002\">\n        </div>"
+        },
+        {
+          "AllowMultiple": false,
+          "EndLine": 6681,
+          "ReplacementContent": "    function openExceptionModal() {\n        if (!selectedEmployeeId) {\n            Swal.fire('Error', 'Please select an employee first.', 'error');\n            return;\n        }\n        document.getElementById('excStart').value = '';\n        document.getElementById('excEnd').value = '';\n        document.getElementById('excReplacementId').value = '';\n        document.getElementById('excNotes').value = '';\n        document.getElementById('coverSuggestions').innerHTML = '';\n        document.getElementById('exceptionModal').style.display = 'block';\n    }\n\n    function suggestReplacements() {\n        const startStr = document.getElementById('excStart').value;\n        const endStr = document.getElementById('excEnd').value;\n        const suggestionsDiv = document.getElementById('coverSuggestions');\n        suggestionsDiv.innerHTML = '';\n\n        if (!startStr || !endStr || !selectedEmployeeId) return;\n\n        const emp = employees.find(e => String(e.ID) === String(selectedEmployeeId));\n        if (!emp || !emp.Department) return;\n\n        const startNum = parseDate(startStr).getTime();\n        const endNum = parseDate(endStr).getTime();\n        if (startNum > endNum) return;\n\n        let availableCovers = [];\n\n        employees.forEach(e => {\n            if (e.ID === emp.ID) return;\n            if (e.Department !== emp.Department) return; // Must be same department\n\n            let coversFully = false;\n            if (e.Rotations) {\n                e.Rotations.forEach(r => {\n                    if (r.type === 'leave' || r.type === 'rest') {\n                        const rStart = parseDate(r.start).getTime();\n                        const rEnd = parseDate(r.end).getTime();\n                        if (rStart <= startNum && rEnd >= endNum) {\n                            coversFully = true;\n                        }\n                    }\n                });\n            }\n\n            let hasConflictOverride = false;\n            if (e.Overrides) {\n                e.Overrides.forEach(ov => {\n                    const oStart = parseDate(ov.start).getTime();\n                    const oEnd = parseDate(ov.end).getTime();\n                    if (oStart <= endNum && oEnd >= startNum) {\n                        hasConflictOverride = true;\n                    }\n                });\n            }\n\n            if (coversFully && !hasConflictOverride) {\n                availableCovers.push(e);\n            }\n        });\n\n        if (availableCovers.length > 0) {\n            let html = '<div style=\"width: 100%; font-size: 11px; color: #10b981; margin-bottom: 4px;\">✨ Smart Suggestions (Colleagues on Leave):</div>';\n            availableCovers.forEach(c => {\n                html += `<span onclick=\"document.getElementById('excReplacementId').value = '${c.ID}';\" style=\"cursor:pointer; background: rgba(16,185,129,0.1); color: #10b981; border: 1px solid rgba(16,185,129,0.3); padding: 4px 10px; border-radius: 20px; font-size: 11px; transition: all 0.2s;\" onmouseover=\"this.style.background='rgba(16,185,129,0.2)'\" onmouseout=\"this.style.background='rgba(16,185,129,0.1)'\" title=\"Select ${c.Name}\">👤 ${c.Name} (${c.ID})</span>`;\n            });\n            suggestionsDiv.innerHTML = html;\n        } else {\n            suggestionsDiv.innerHTML = '<div style=\"width: 100%; font-size: 11px; color: #94a3b8;\">No matching colleagues found on leave in this department.</div>';\n        }\n    }",
+          "StartLine": 6670,
+          "TargetContent": "    function openExceptionModal() {\n        if (!selectedEmployeeId) {\n            Swal.fire('Error', 'Please select an employee first.', 'error');\n            return;\n        }\n        document.getElementById('excStart').value = '';\n        document.getElementById('excEnd').value = '';\n        document.getElementById('excReplacementId').value = '';\n        document.getElementById('excNotes').value = '';\n        document.getElementById('exceptionModal').style.display = 'block';\n    }"
+        }
+      ],
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Implementing Smart Cover Suggestions",
+      "toolSummary": "Add Smart Cover logic index.html"
+    }
+  },
+  {
+    "name": "multi_replace_file_content",
+    "args": {
+      "Description": "Add a glowing, live digital clock to the header.",
+      "Instruction": "Insert a stylish clock UI into the header-section, add CSS animation for the blinking colon, and add JavaScript to update it every second.",
+      "ReplacementChunks": [
+        {
+          "AllowMultiple": false,
+          "EndLine": 21,
+          "ReplacementContent": "        @keyframes fadeOut {\n            to { opacity: 0; }\n        }\n\n        /* --- Live Clock Animation --- */\n        @keyframes clockBlink {\n            0%, 100% { opacity: 1; }\n            50% { opacity: 0; }\n        }\n        \n        .live-clock-container {\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n            justify-content: center;\n            background: rgba(15, 23, 42, 0.5);\n            border: 1px solid rgba(139, 92, 246, 0.4);\n            padding: 8px 24px;\n            border-radius: 16px;\n            backdrop-filter: blur(12px);\n            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2), inset 0 0 10px rgba(139,92,246, 0.1);\n            transition: all 0.3s ease;\n            position: relative;\n            overflow: hidden;\n        }\n        \n        .live-clock-container::before {\n            content: '';\n            position: absolute;\n            top: -50%; left: -50%;\n            width: 200%; height: 200%;\n            background: conic-gradient(from 0deg, transparent 0%, rgba(139,92,246,0.3) 25%, transparent 50%);\n            animation: rotateGlow 4s linear infinite;\n            z-index: 0;\n            opacity: 0.5;\n        }\n        \n        @keyframes rotateGlow {\n            100% { transform: rotate(360deg); }\n        }\n\n        .live-clock-content {\n            position: relative;\n            z-index: 1;\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n        }\n\n        .live-clock-time {\n            font-size: 28px;\n            font-weight: 800;\n            font-family: 'Inter', sans-serif;\n            letter-spacing: 2px;\n            color: #ffffff;\n            text-shadow: 0 0 10px rgba(139,92,246,0.8), 0 0 20px rgba(124,58,237,0.6);\n            display: flex;\n            align-items: baseline;\n            gap: 2px;\n        }\n\n        .live-clock-colon {\n            animation: clockBlink 1s infinite;\n            color: #a78bfa;\n            margin: 0 2px;\n        }\n\n        .live-clock-sec {\n            font-size: 14px;\n            color: #cbd5e1;\n            text-shadow: none;\n            margin-left: 6px;\n            font-weight: 600;\n        }\n\n        .live-clock-ampm {\n            font-size: 14px;\n            color: #a78bfa;\n            margin-left: 4px;\n            font-weight: 700;\n        }\n\n        .live-clock-date {\n            font-size: 11px;\n            font-weight: 600;\n            color: #94a3b8;\n            text-transform: uppercase;\n            letter-spacing: 1.5px;\n            margin-top: 2px;\n        }\n        \n        .light-mode .live-clock-container {\n            background: rgba(255, 255, 255, 0.7);\n            border: 1px solid rgba(139, 92, 246, 0.3);\n            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.15);\n        }\n        .light-mode .live-clock-time {\n            color: #4f46e5;\n            text-shadow: none;\n        }\n        .light-mode .live-clock-sec { color: #64748b; }\n        .light-mode .live-clock-ampm { color: #8b5cf6; }\n        .light-mode .live-clock-date { color: #64748b; }\n\n        /* --- Scrollbar Customization --- */",
+          "StartLine": 21,
+          "TargetContent": "        @keyframes fadeOut {\n            to { opacity: 0; }\n        }\n\n        /* --- Scrollbar Customization --- */"
+        },
+        {
+          "AllowMultiple": false,
+          "EndLine": 2424,
+          "ReplacementContent": "        <div style=\"display: flex; align-items: center; gap: 15px;\">\n            <div style=\"width: 68px; height: 68px; display: flex; justify-content: center; align-items: center; background: transparent;\">\n                <img src=\"logo_v4.png\" alt=\"Company Logo\" style=\"height: 100%; width: 100%; object-fit: contain;\">\n            </div>\n            <h1 style=\"margin: 0; font-weight: 800; font-size: 28px; line-height: 1.2; display: flex; flex-direction: column; align-items: flex-start; gap: 2px;\">\n                <div class=\"gradient-text\">✨ HR-BLK53-System</div>\n                <div style=\"font-size: 14px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;\">Rotations & Daily Movements Tracker</div>\n            </h1>\n        </div>\n\n        <!-- NEW LIVE CLOCK -->\n        <div class=\"live-clock-container\" title=\"System Time\">\n            <div class=\"live-clock-content\">\n                <div class=\"live-clock-time\">\n                    <span id=\"sysHour\">00</span><span class=\"live-clock-colon\">:</span><span id=\"sysMin\">00</span>\n                    <span class=\"live-clock-sec\" id=\"sysSec\">00</span>\n                    <span class=\"live-clock-ampm\" id=\"sysAmPm\">AM</span>\n                </div>\n                <div class=\"live-clock-date\" id=\"sysDate\">\n                    ---\n                </div>\n            </div>\n        </div>\n\n        <div style=\"display: flex; align-items: center; gap: 15px;\">",
+          "StartLine": 2417,
+          "TargetContent": "        <div style=\"display: flex; align-items: center; gap: 15px;\">\n            <div style=\"width: 68px; height: 68px; display: flex; justify-content: center; align-items: center; background: transparent;\">\n                <img src=\"logo_v4.png\" alt=\"Company Logo\" style=\"height: 100%; width: 100%; object-fit: contain;\">\n            </div>\n            <h1 style=\"margin: 0; font-weight: 800; font-size: 28px; line-height: 1.2; display: flex; flex-direction: column; align-items: flex-start; gap: 2px;\">\n                <div class=\"gradient-text\">✨ HR-BLK53-System</div>\n                <div style=\"font-size: 14px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;\">Rotations & Daily Movements Tracker</div>\n            </h1>\n        </div>\n        <div style=\"display: flex; align-items: center; gap: 15px;\">"
+        },
+        {
+          "AllowMultiple": false,
+          "EndLine": 10069,
+          "ReplacementContent": "    // ---------------------------------\n    // SMART SYSTEM CLOCK\n    // ---------------------------------\n    function updateSystemClock() {\n        const now = new Date();\n        let h = now.getHours();\n        let m = now.getMinutes();\n        let s = now.getSeconds();\n        const ampm = h >= 12 ? 'PM' : 'AM';\n        \n        h = h % 12;\n        h = h ? h : 12;\n        \n        document.getElementById('sysHour').innerText = h < 10 ? '0' + h : h;\n        document.getElementById('sysMin').innerText = m < 10 ? '0' + m : m;\n        document.getElementById('sysSec').innerText = s < 10 ? '0' + s : s;\n        document.getElementById('sysAmPm').innerText = ampm;\n        \n        const options = { weekday: 'short', year: 'numeric', month: 'short', day: '2-digit' };\n        document.getElementById('sysDate').innerText = now.toLocaleDateString('en-US', options).toUpperCase();\n    }\n    setInterval(updateSystemClock, 1000);\n    updateSystemClock(); // run immediately\n\n</script>\n</body>\n</html>",
+          "StartLine": 10065,
+          "TargetContent": "</script>\n</body>\n</html>"
+        }
+      ],
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Adding live clock",
+      "toolSummary": "Add live clock index.html"
+    }
+  },
+  {
+    "name": "multi_replace_file_content",
+    "args": {
+      "Description": "Fixing script placement",
+      "Instruction": "Fix the script tag replacement at the end of the file",
+      "ReplacementChunks": [
+        {
+          "AllowMultiple": false,
+          "EndLine": 10603,
+          "ReplacementContent": "    <!-- Rotation Agent -->\n    <script src=\"scripts/rotation_agent.js\"></script>\n    <script>\n    // ---------------------------------\n    // SMART SYSTEM CLOCK\n    // ---------------------------------\n    function updateSystemClock() {\n        const now = new Date();\n        let h = now.getHours();\n        let m = now.getMinutes();\n        let s = now.getSeconds();\n        const ampm = h >= 12 ? 'PM' : 'AM';\n        \n        h = h % 12;\n        h = h ? h : 12;\n        \n        document.getElementById('sysHour').innerText = h < 10 ? '0' + h : h;\n        document.getElementById('sysMin').innerText = m < 10 ? '0' + m : m;\n        document.getElementById('sysSec').innerText = s < 10 ? '0' + s : s;\n        document.getElementById('sysAmPm').innerText = ampm;\n        \n        const options = { weekday: 'short', year: 'numeric', month: 'short', day: '2-digit' };\n        document.getElementById('sysDate').innerText = now.toLocaleDateString('en-US', options).toUpperCase();\n    }\n    setInterval(updateSystemClock, 1000);\n    updateSystemClock(); // run immediately\n    </script>\n</body>\n</html>",
+          "StartLine": 10574,
+          "TargetContent": "    <!-- Rotation Agent -->\n    <script src=\"scripts/rotation_agent.js\">    // ---------------------------------\n    // SMART SYSTEM CLOCK\n    // ---------------------------------\n    function updateSystemClock() {\n        const now = new Date();\n        let h = now.getHours();\n        let m = now.getMinutes();\n        let s = now.getSeconds();\n        const ampm = h >= 12 ? 'PM' : 'AM';\n        \n        h = h % 12;\n        h = h ? h : 12;\n        \n        document.getElementById('sysHour').innerText = h < 10 ? '0' + h : h;\n        document.getElementById('sysMin').innerText = m < 10 ? '0' + m : m;\n        document.getElementById('sysSec').innerText = s < 10 ? '0' + s : s;\n        document.getElementById('sysAmPm').innerText = ampm;\n        \n        const options = { weekday: 'short', year: 'numeric', month: 'short', day: '2-digit' };\n        document.getElementById('sysDate').innerText = now.toLocaleDateString('en-US', options).toUpperCase();\n    }\n    setInterval(updateSystemClock, 1000);\n    updateSystemClock(); // run immediately\n\n</script>\n</body>\n</html>"
+        }
+      ],
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Fixing script tag placement",
+      "toolSummary": "Fix script index.html"
+    }
+  },
+  {
+    "name": "multi_replace_file_content",
+    "args": {
+      "Description": "Remove old block clock and replace with a sleek corner one-line clock",
+      "Instruction": "Remove the old live-clock-container from the header and place a sleek, minimalist inline clock at the top right corner. Update the CSS and JS accordingly.",
+      "ReplacementChunks": [
+        {
+          "AllowMultiple": false,
+          "EndLine": 2361,
+          "ReplacementContent": "        <div style=\"display: flex; align-items: center; gap: 15px;\">\n            <div style=\"width: 68px; height: 68px; display: flex; justify-content: center; align-items: center; background: transparent;\">\n                <img src=\"logo_v4.png\" alt=\"Company Logo\" style=\"height: 100%; width: 100%; object-fit: contain;\">\n            </div>\n            <h1 style=\"margin: 0; font-weight: 800; font-size: 28px; line-height: 1.2; display: flex; flex-direction: column; align-items: flex-start; gap: 2px;\">\n                <div class=\"gradient-text\">✨ HR-BLK53-System</div>\n                <div style=\"font-size: 14px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;\">Rotations & Daily Movements Tracker</div>\n            </h1>\n        </div>\n\n        <div style=\"display: flex; align-items: center; gap: 25px;\">\n            <!-- Ultra Minimalist Inline Clock -->\n            <div class=\"sleek-clock\" id=\"sysClockText\" title=\"System Time\">\n                --:--:--\n            </div>",
+          "StartLine": 2340,
+          "TargetContent": "        <div style=\"display: flex; align-items: center; gap: 15px;\">\n            <div style=\"width: 68px; height: 68px; display: flex; justify-content: center; align-items: center; background: transparent;\">\n                <img src=\"logo_v4.png\" alt=\"Company Logo\" style=\"height: 100%; width: 100%; object-fit: contain;\">\n            </div>\n            <h1 style=\"margin: 0; font-weight: 800; font-size: 28px; line-height: 1.2; display: flex; flex-direction: column; align-items: flex-start; gap: 2px;\">\n                <div class=\"gradient-text\">✨ HR-BLK53-System</div>\n                <div style=\"font-size: 14px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;\">Rotations & Daily Movements Tracker</div>\n            </h1>\n        </div>\n\n        <!-- Live Clock -->\n        <div class=\"live-clock-container\" title=\"System Time\">\n            <div class=\"live-clock-content\">\n                <div class=\"live-clock-time\">\n                    <span id=\"sysHour\">00</span><span class=\"live-clock-colon\">:</span><span id=\"sysMin\">00</span>\n                    <span class=\"live-clock-sec\" id=\"sysSec\">00</span>\n                    <span class=\"live-clock-ampm\" id=\"sysAmPm\">AM</span>\n                </div>\n                <div class=\"live-clock-date\" id=\"sysDate\">\n                    ---\n                </div>\n            </div>\n        </div>\n\n        <div style=\"display: flex; align-items: center; gap: 15px;\">"
+        },
+        {
+          "AllowMultiple": false,
+          "EndLine": 70,
+          "ReplacementContent": "        /* --- Ultra-Sleek Inline Clock --- */\n        .sleek-clock {\n            font-family: 'Inter', sans-serif;\n            font-size: 14px;\n            font-weight: 600;\n            color: var(--text-muted);\n            letter-spacing: 1px;\n            display: flex;\n            align-items: center;\n            gap: 12px;\n            padding-right: 25px;\n            border-right: 1px solid var(--glass-border);\n            text-transform: uppercase;\n        }\n        .sleek-clock .time-part {\n            color: var(--text);\n            font-weight: 800;\n            font-size: 18px;\n            background: -webkit-linear-gradient(0deg, #8b5cf6, #3b82f6);\n            -webkit-background-clip: text;\n            -webkit-text-fill-color: transparent;\n        }\n        .sleek-clock .date-part {\n            color: var(--text-muted);\n            font-size: 12px;\n            letter-spacing: 2px;\n        }\n        \n        .light-mode .sleek-clock .time-part {\n            background: -webkit-linear-gradient(0deg, #4f46e5, #0ea5e9);\n            -webkit-background-clip: text;\n            -webkit-text-fill-color: transparent;\n        }",
+          "StartLine": 24,
+          "TargetContent": "        /* --- Live Clock Animation --- */\n        @keyframes clockBlink {\n            0%, 100% { opacity: 1; }\n            50% { opacity: 0; }\n        }\n        \n        .live-clock-container {\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n            justify-content: center;\n            background: rgba(15, 23, 42, 0.5);\n            border: 1px solid rgba(139, 92, 246, 0.4);\n            padding: 8px 24px;\n            border-radius: 16px;\n            backdrop-filter: blur(12px);\n            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2), inset 0 0 10px rgba(139,92,246, 0.1);\n            transition: all 0.3s ease;\n            position: relative;\n            overflow: hidden;\n        }\n        \n        .live-clock-container::before {\n            content: '';\n            position: absolute;\n            top: -50%; left: -50%;\n            width: 200%; height: 200%;\n            background: conic-gradient(from 0deg, transparent 0%, rgba(139,92,246,0.3) 25%, transparent 50%);\n            animation: rotateGlow 4s linear infinite;\n            z-index: 0;\n            opacity: 0.5;\n        }\n        \n        @keyframes rotateGlow {\n            100% { transform: rotate(360deg); }\n        }\n\n        .live-clock-content {\n            position: relative;\n            z-index: 1;\n            display: flex;\n            flex-direction: column;\n            align-items: center;\n        }\n\n        .live-clock-time {\n            font-size: 28px;\n            font-weight: 800;\n            font-family: 'Inter', sans-serif;\n            letter-spacing: 2px;\n            color: #ffffff;\n            text-shadow: 0 0 10px rgba(139,92,246,0.8), 0 0 20px rgba(124,58,237,0.6);\n            display: flex;\n            align-items: baseline;\n            gap: 2px;\n        }\n\n        .live-clock-colon {\n            animation: clockBlink 1s infinite;\n            color: #a78bfa;\n            margin: 0 2px;\n        }\n\n        .live-clock-sec {\n            font-size: 14px;\n            color: #cbd5e1;\n            text-shadow: none;\n            margin-left: 6px;\n            font-weight: 600;\n        }\n\n        .live-clock-ampm {\n            font-size: 14px;\n            color: #a78bfa;\n            margin-left: 4px;\n            font-weight: 700;\n        }\n\n        .live-clock-date {\n            font-size: 11px;\n            font-weight: 600;\n            color: #94a3b8;\n            text-transform: uppercase;\n            letter-spacing: 1.5px;\n            margin-top: 2px;\n        }\n        \n        .light-mode .live-clock-container {\n            background: rgba(255, 255, 255, 0.7);\n            border: 1px solid rgba(139, 92, 246, 0.3);\n            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.15);\n        }\n        .light-mode .live-clock-time {\n            color: #4f46e5;\n            text-shadow: none;\n        }\n        .light-mode .live-clock-sec { color: #64748b; }\n        .light-mode .live-clock-ampm { color: #8b5cf6; }\n        .light-mode .live-clock-date { color: #64748b; }"
+        },
+        {
+          "AllowMultiple": false,
+          "EndLine": 10599,
+          "ReplacementContent": "        const now = new Date();\n        let h = now.getHours();\n        let m = now.getMinutes();\n        let s = now.getSeconds();\n        const ampm = h >= 12 ? 'PM' : 'AM';\n        \n        h = h % 12;\n        h = h ? h : 12;\n        \n        h = h < 10 ? '0' + h : h;\n        m = m < 10 ? '0' + m : m;\n        s = s < 10 ? '0' + s : s;\n        \n        const options = { weekday: 'long', year: 'numeric', month: 'short', day: '2-digit' };\n        const dateStr = now.toLocaleDateString('en-US', options).toUpperCase();\n        \n        const html = `\n            <span class=\"date-part\">${dateStr}</span>\n            <span class=\"time-part\">${h}:${m}<span style=\"font-size: 12px; margin-left: 3px;\">${s}</span> ${ampm}</span>\n        `;\n        document.getElementById('sysClockText').innerHTML = html;",
+          "StartLine": 10582,
+          "TargetContent": "        const now = new Date();\n        let h = now.getHours();\n        let m = now.getMinutes();\n        let s = now.getSeconds();\n        const ampm = h >= 12 ? 'PM' : 'AM';\n        \n        h = h % 12;\n        h = h ? h : 12;\n        \n        document.getElementById('sysHour').innerText = h < 10 ? '0' + h : h;\n        document.getElementById('sysMin').innerText = m < 10 ? '0' + m : m;\n        document.getElementById('sysSec').innerText = s < 10 ? '0' + s : s;\n        document.getElementById('sysAmPm').innerText = ampm;\n        \n        const options = { weekday: 'short', year: 'numeric', month: 'short', day: '2-digit' };\n        document.getElementById('sysDate').innerText = now.toLocaleDateString('en-US', options).toUpperCase();"
+        }
+      ],
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Updating clock style to sleek inline",
+      "toolSummary": "Update clock index.html"
+    }
+  },
+  {
+    "name": "multi_replace_file_content",
+    "args": {
+      "Description": "Add sleek inline clock to the top right corner",
+      "Instruction": "Add the minimalist inline clock and update the script to render the clock",
+      "ReplacementChunks": [
+        {
+          "AllowMultiple": false,
+          "EndLine": 2352,
+          "ReplacementContent": "        <div style=\"display: flex; align-items: center; gap: 15px;\">\n            <!-- Ultra Minimalist Inline Clock -->\n            <div id=\"sysClockText\" title=\"System Time\" style=\"font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 12px; margin-right: 15px; border-right: 1px solid var(--glass-border); padding-right: 15px; text-transform: uppercase; letter-spacing: 1px;\">\n                --:--:--\n            </div>\n            <div style=\"position: relative;\">",
+          "StartLine": 2351,
+          "TargetContent": "        <div style=\"display: flex; align-items: center; gap: 15px;\">\n            <div style=\"position: relative;\">"
+        },
+        {
+          "AllowMultiple": false,
+          "EndLine": 10565,
+          "ReplacementContent": "    <!-- Rotation Agent -->\n    <script src=\"scripts/rotation_agent.js\"></script>\n\n    <script>\n    // ---------------------------------\n    // SMART SYSTEM CLOCK (Minimalist)\n    // ---------------------------------\n    function updateSystemClock() {\n        const now = new Date();\n        let h = now.getHours();\n        let m = now.getMinutes();\n        let s = now.getSeconds();\n        const ampm = h >= 12 ? 'PM' : 'AM';\n        \n        h = h % 12;\n        h = h ? h : 12;\n        \n        h = h < 10 ? '0' + h : h;\n        m = m < 10 ? '0' + m : m;\n        s = s < 10 ? '0' + s : s;\n        \n        const options = { weekday: 'short', year: 'numeric', month: 'short', day: '2-digit' };\n        const dateStr = now.toLocaleDateString('en-US', options).toUpperCase();\n        \n        const isLight = document.documentElement.classList.contains('light-mode');\n        const timeColor = isLight ? '#4f46e5' : '#8b5cf6';\n        \n        const html = `\n            <span style=\"color: var(--text-muted); font-size: 11px; letter-spacing: 2px;\">${dateStr}</span>\n            <span style=\"color: ${timeColor}; font-weight: 800; font-size: 16px;\">${h}:${m}<span style=\"font-size: 11px; margin-left: 2px; color: var(--text-muted);\">${s}</span> ${ampm}</span>\n        `;\n        const clockEl = document.getElementById('sysClockText');\n        if (clockEl) clockEl.innerHTML = html;\n    }\n    setInterval(updateSystemClock, 1000);\n    updateSystemClock();\n    </script>\n</body>\n</html>",
+          "StartLine": 10562,
+          "TargetContent": "    <!-- Rotation Agent -->\n    <script src=\"scripts/rotation_agent.js\"></script>\n</body>\n</html>"
+        }
+      ],
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Adding minimalist clock",
+      "toolSummary": "Add minimalist clock index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Fixing syntax errors in directExportPDF and making it professional by using html2pdf.js for actual PDF generation.",
+      "EndLine": 7525,
+      "Instruction": "Replace the broken directExportPDF function with a professional implementation using html2pdf.js via CDN injection.",
+      "ReplacementContent": "    function directExportPDF() {\n        if (typeof Swal !== 'undefined') {\n            Swal.fire({\n                title: 'Generating PDF...',\n                text: 'Please wait while we prepare your professional report.',\n                icon: 'info',\n                allowOutsideClick: false,\n                didOpen: () => { Swal.showLoading(); }\n            });\n        }\n        \n        let html = `\n            <table style=\"width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px;\">\n                <thead>\n                    <tr>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">#</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">ID</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: left; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Name</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Company</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Destination</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Phone</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Work (Days)</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Leave (Days)</th>\n                    </tr>\n                </thead>\n                <tbody>\n        `;\n        \n        let displayList = filteredEmployees.map(e => {\n            let totalWork = 0, totalLeave = 0;\n            if (e.Rotations) {\n                e.Rotations.forEach(r => {\n                    const days = Math.floor((parseDate(r.end).getTime() - parseDate(r.start).getTime()) / (1000 * 3600 * 24)) + 1;\n                    if (r.type === 'work' || r.type === 'standby_cover') totalWork += days;\n                    if (r.type === 'leave' || r.type === 'rest') totalLeave += days;\n                });\n            }\n            return { ...e, computedWork: totalWork, computedLeave: totalLeave };\n        });\n\n        displayList.forEach((e, idx) => {\n            html += `<tr>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #334155;\">${idx + 1}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; font-weight: bold; color: #0f172a;\">${e.ID || '-'}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: left; color: #334155;\">\n                    <div style=\"font-weight: 600;\">${e.Name || '-'}</div>\n                </td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #334155;\">${e.Company || '-'}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #334155;\">${e.Destination || '-'}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #334155;\">${e.Phone || '-'}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #10b981; font-weight: 600;\">${e.computedWork}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #ef4444; font-weight: 600;\">${e.computedLeave}</td>\n            </tr>`;\n        });\n        html += `</tbody></table>`;\n\n        const script = document.createElement('script');\n        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';\n        script.onload = () => {\n            const tempDiv = document.createElement('div');\n            tempDiv.innerHTML = `\n                <div style=\"padding: 20px; background: white; color: black; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;\">\n                    <div style=\"display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px;\">\n                        <h2 style=\"margin: 0; color: #1e293b; font-size: 20px; font-weight: 800;\">🏢 HR-BLK53 Master Directory</h2>\n                        <div style=\"text-align: right; font-size: 10px; color: #64748b;\">\n                            <div>Generated: ${new Date().toLocaleDateString('en-GB')}</div>\n                            <div>Total Personnel: ${displayList.length}</div>\n                        </div>\n                    </div>\n                    ${html}\n                </div>\n            `;\n            \n            const opt = {\n                margin:       0.4,\n                filename:     'HR_Master_Report_' + new Date().toISOString().split('T')[0] + '.pdf',\n                image:        { type: 'jpeg', quality: 0.98 },\n                html2canvas:  { scale: 2, useCORS: true },\n                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }\n            };\n            \n            html2pdf().set(opt).from(tempDiv).save().then(() => {\n                if (typeof Swal !== 'undefined') Swal.close();\n            });\n        };\n        script.onerror = () => {\n            if (typeof Swal !== 'undefined') {\n                Swal.fire('Error', 'Failed to load PDF engine. Check your internet connection.', 'error');\n            }\n        };\n        document.head.appendChild(script);\n    }",
+      "StartLine": 7457,
+      "TargetContent": "    function directExportPDF() {\n        let html = `\n            <table style=\"width: 100%; border-collapse: collapse; margin-top: 20px;\">\n                <thead>\n                    <tr>\n                        <th style=\"border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;\">#</th>\n                        <th style=\"border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;\">ID</th>\n                        <th style=\"border: 1px solid #ccc; padding: 8px; text-align: left; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;\">Name</th>\n                        <th style=\"border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;\">Company</th>\n                        <th style=\"border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;\">Destination</th>\n                        <th style=\"border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;\">Phone</th>\n                        <th style=\"border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;\">Total Work</th>\n                        <th style=\"border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;\">Total Leave</th>\n                    </tr>\n                </thead>\n                <tbody>\n        `;\n        \n        let displayList = filteredEmployees.map(e => {\n            let totalWork = 0, totalLeave = 0;\n            if (e.Rotations) {\n                e.Rotations.forEach(r => {\n                    const days = Math.floor((parseDate(r.end).getTime() - parseDate(r.start).getTime()) / (1000 * 3600 * 24)) + 1;\n                    if (r.type === 'work' || r.type === 'standby_cover') totalWork += days;\n                    if (r.type === 'leave' || r.type === 'rest') totalLeave += days;\n                });\n            }\n            return { ...e, computedWork: totalWork, computedLeave: totalLeave };\n        });\n\n        displayList.forEach((e, idx) => {\n            html += \\`<tr>\n                <td style=\"border: 1px solid #ccc; padding: 8px; text-align: center; color: black;\">\\${idx + 1}</td>\n                <td style=\"border: 1px solid #ccc; padding: 8px; text-align: center; font-weight: bold; color: black;\">\\${e.ID || '-'}</td>\n                <td style=\"border: 1px solid #ccc; padding: 8px; text-align: left; color: black;\">\n                    <div style=\"font-weight: 500;\">\\${e.Name || '-'}</div>\n                </td>\n                <td style=\"border: 1px solid #ccc; padding: 8px; text-align: center; color: black;\">\\${e.Company || '-'}</td>\n                <td style=\"border: 1px solid #ccc; padding: 8px; text-align: center; color: black;\">\\${e.Destination || '-'}</td>\n                <td style=\"border: 1px solid #ccc; padding: 8px; text-align: center; color: black;\">\\${e.Phone || '-'}</td>\n                <td style=\"border: 1px solid #ccc; padding: 8px; text-align: center; color: black;\">\\${e.computedWork} days</td>\n                <td style=\"border: 1px solid #ccc; padding: 8px; text-align: center; color: black;\">\\${e.computedLeave} days</td>\n            </tr>\\`;\n        });\n        html += \\`</tbody></table>\\`;\n\n        const printWindow = window.open('', '', 'width=1000,height=700');\n        printWindow.document.write(\\`\n            <html>\n                <head>\n                    <title>Export PDF - Master Report</title>\n                    <style>\n                        body { font-family: Arial, sans-serif; padding: 20px; color: #000; background: #fff; }\n                        h2 { text-align: center; color: #000; margin-bottom: 5px; }\n                        .date-info { text-align: center; font-style: italic; color: #666; margin-bottom: 20px; }\n                    </style>\n                </head>\n                <body>\n                    <h2>??? Employees Directory Master Report</h2>\n                    <div class=\"date-info\">Generated on: \\${new Date().toLocaleDateString()}</div>\n                    \\${html}\n                </body>\n            </html>\n        \\`);\n        printWindow.document.close();\n        printWindow.focus();\n        setTimeout(() => {\n            printWindow.print();\n            printWindow.close();\n        }, 250);\n    }",
+      "TargetFile": "C:\\Users\\Abdullah\\.gemini\\antigravity\\brain\\47dd35d5-87bd-4b20-992f-615f41718b3c/../../../../../../d:\\Rotations\\index.html",
+      "toolAction": "Replacing directExportPDF logic",
+      "toolSummary": "Replace directExportPDF index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Fixing syntax errors in directExportPDF and making it professional by using html2pdf.js for actual PDF generation.",
+      "EndLine": 7525,
+      "Instruction": "Replace the broken directExportPDF function with a professional implementation using html2pdf.js via CDN injection.",
+      "ReplacementContent": "    function directExportPDF() {\n        if (typeof Swal !== 'undefined') {\n            Swal.fire({\n                title: 'Generating PDF...',\n                text: 'Please wait while we prepare your professional report.',\n                icon: 'info',\n                allowOutsideClick: false,\n                didOpen: () => { Swal.showLoading(); }\n            });\n        }\n        \n        let html = `\n            <table style=\"width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px;\">\n                <thead>\n                    <tr>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">#</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">ID</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: left; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Name</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Company</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Destination</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Phone</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Work (Days)</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Leave (Days)</th>\n                    </tr>\n                </thead>\n                <tbody>\n        `;\n        \n        let displayList = filteredEmployees.map(e => {\n            let totalWork = 0, totalLeave = 0;\n            if (e.Rotations) {\n                e.Rotations.forEach(r => {\n                    const days = Math.floor((parseDate(r.end).getTime() - parseDate(r.start).getTime()) / (1000 * 3600 * 24)) + 1;\n                    if (r.type === 'work' || r.type === 'standby_cover') totalWork += days;\n                    if (r.type === 'leave' || r.type === 'rest') totalLeave += days;\n                });\n            }\n            return { ...e, computedWork: totalWork, computedLeave: totalLeave };\n        });\n\n        displayList.forEach((e, idx) => {\n            html += `<tr>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #334155;\">${idx + 1}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; font-weight: bold; color: #0f172a;\">${e.ID || '-'}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: left; color: #334155;\">\n                    <div style=\"font-weight: 600;\">${e.Name || '-'}</div>\n                </td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #334155;\">${e.Company || '-'}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #334155;\">${e.Destination || '-'}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #334155;\">${e.Phone || '-'}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #10b981; font-weight: 600;\">${e.computedWork}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #ef4444; font-weight: 600;\">${e.computedLeave}</td>\n            </tr>`;\n        });\n        html += `</tbody></table>`;\n\n        const script = document.createElement('script');\n        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';\n        script.onload = () => {\n            const tempDiv = document.createElement('div');\n            tempDiv.innerHTML = `\n                <div style=\"padding: 20px; background: white; color: black; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;\">\n                    <div style=\"display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px;\">\n                        <h2 style=\"margin: 0; color: #1e293b; font-size: 20px; font-weight: 800;\">✨ HR-BLK53 Master Directory</h2>\n                        <div style=\"text-align: right; font-size: 10px; color: #64748b;\">\n                            <div>Generated: ${new Date().toLocaleDateString('en-GB')}</div>\n                            <div>Total Personnel: ${displayList.length}</div>\n                        </div>\n                    </div>\n                    ${html}\n                </div>\n            `;\n            \n            const opt = {\n                margin:       0.4,\n                filename:     'HR_Master_Report_' + new Date().toISOString().split('T')[0] + '.pdf',\n                image:        { type: 'jpeg', quality: 0.98 },\n                html2canvas:  { scale: 2, useCORS: true },\n                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }\n            };\n            \n            html2pdf().set(opt).from(tempDiv).save().then(() => {\n                if (typeof Swal !== 'undefined') Swal.close();\n            });\n        };\n        script.onerror = () => {\n            if (typeof Swal !== 'undefined') {\n                Swal.fire('Error', 'Failed to load PDF engine. Check your internet connection.', 'error');\n            }\n        };\n        document.head.appendChild(script);\n    }",
+      "StartLine": 7457,
+      "TargetContent": "    function directExportPDF() {\n        let html = `\n            <table style=\"width: 100%; border-collapse: collapse; margin-top: 20px;\">\n                <thead>\n                    <tr>\n                        <th style=\"border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;\">#</th>\n                        <th style=\"border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;\">ID</th>\n                        <th style=\"border: 1px solid #ccc; padding: 8px; text-align: left; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;\">Name</th>\n                        <th style=\"border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;\">Company</th>\n                        <th style=\"border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;\">Destination</th>\n                        <th style=\"border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;\">Phone</th>\n                        <th style=\"border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;\">Total Work</th>\n                        <th style=\"border: 1px solid #ccc; padding: 8px; text-align: center; background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; color: black;\">Total Leave</th>\n                    </tr>\n                </thead>\n                <tbody>\n        `;\n        \n        let displayList = filteredEmployees.map(e => {\n            let totalWork = 0, totalLeave = 0;\n            if (e.Rotations) {\n                e.Rotations.forEach(r => {\n                    const days = Math.floor((parseDate(r.end).getTime() - parseDate(r.start).getTime()) / (1000 * 3600 * 24)) + 1;\n                    if (r.type === 'work' || r.type === 'standby_cover') totalWork += days;\n                    if (r.type === 'leave' || r.type === 'rest') totalLeave += days;\n                });\n            }\n            return { ...e, computedWork: totalWork, computedLeave: totalLeave };\n        });\n\n        displayList.forEach((e, idx) => {\n            html += \\`<tr>\n                <td style=\"border: 1px solid #ccc; padding: 8px; text-align: center; color: black;\">\\${idx + 1}</td>\n                <td style=\"border: 1px solid #ccc; padding: 8px; text-align: center; font-weight: bold; color: black;\">\\${e.ID || '-'}</td>\n                <td style=\"border: 1px solid #ccc; padding: 8px; text-align: left; color: black;\">\n                    <div style=\"font-weight: 500;\">\\${e.Name || '-'}</div>\n                </td>\n                <td style=\"border: 1px solid #ccc; padding: 8px; text-align: center; color: black;\">\\${e.Company || '-'}</td>\n                <td style=\"border: 1px solid #ccc; padding: 8px; text-align: center; color: black;\">\\${e.Destination || '-'}</td>\n                <td style=\"border: 1px solid #ccc; padding: 8px; text-align: center; color: black;\">\\${e.Phone || '-'}</td>\n                <td style=\"border: 1px solid #ccc; padding: 8px; text-align: center; color: black;\">\\${e.computedWork} days</td>\n                <td style=\"border: 1px solid #ccc; padding: 8px; text-align: center; color: black;\">\\${e.computedLeave} days</td>\n            </tr>\\`;\n        });\n        html += \\`</tbody></table>\\`;\n\n        const printWindow = window.open('', '', 'width=1000,height=700');\n        printWindow.document.write(\\`\n            <html>\n                <head>\n                    <title>Export PDF - Master Report</title>\n                    <style>\n                        body { font-family: Arial, sans-serif; padding: 20px; color: #000; background: #fff; }\n                        h2 { text-align: center; color: #000; margin-bottom: 5px; }\n                        .date-info { text-align: center; font-style: italic; color: #666; margin-bottom: 20px; }\n                    </style>\n                </head>\n                <body>\n                    <h2>??? Employees Directory Master Report</h2>\n                    <div class=\"date-info\">Generated on: \\${new Date().toLocaleDateString()}</div>\n                    \\${html}\n                </body>\n            </html>\n        \\`);\n        printWindow.document.close();\n        printWindow.focus();\n        setTimeout(() => {\n            printWindow.print();\n            printWindow.close();\n        }, 250);\n    }",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Replacing directExportPDF",
+      "toolSummary": "Replace directExportPDF index.html"
+    }
+  },
+  {
+    "name": "multi_replace_file_content",
+    "args": {
+      "Description": "Removing old syntax error lines from directExportPDF",
+      "Instruction": "Remove the remaining syntax error lines from directExportPDF",
+      "ReplacementChunks": [
+        {
+          "AllowMultiple": false,
+          "EndLine": 7548,
+          "ReplacementContent": "    }",
+          "StartLine": 7543,
+          "TargetContent": "    }        <td style=\"border: 1px solid #ccc; padding: 8px; text-align: center; color: black;\">\\${e.computedLeave} days</td>\n            </tr>\\`;\n        });\n        html += \\`</tbody></table>\\`;\n\n        const printWindow = window.open('', '', 'width=1000,height=700');"
+        },
+        {
+          "AllowMultiple": false,
+          "EndLine": 7563,
+          "ReplacementContent": "",
+          "StartLine": 7549,
+          "TargetContent": "        printWindow.document.write(\\`\n            <html>\n                <head>\n                    <title>Export PDF - Master Report</title>\n                    <style>\n                        body { font-family: Arial, sans-serif; padding: 20px; color: #000; background: #fff; }\n                        h2 { text-align: center; color: #000; margin-bottom: 5px; }\n                        .date-info { text-align: center; font-style: italic; color: #666; margin-bottom: 20px; }\n                    </style>\n                </head>\n                <body>\n                    <h2>👥 Employees Directory Master Report</h2>\n                    <div class=\"date-info\">Generated on: \\${new Date().toLocaleDateString()}</div>\n                    \\${html}\n                </body>"
+        },
+        {
+          "AllowMultiple": false,
+          "EndLine": 7570,
+          "ReplacementContent": "",
+          "StartLine": 7564,
+          "TargetContent": "            </html>\n        \\`);\n        printWindow.document.close();\n        printWindow.focus();\n        setTimeout(() => {\n            printWindow.print();\n            printWindow.close();"
+        }
+      ],
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Removing trailing old function logic",
+      "toolSummary": "Remove old PDF logic index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Clean up lingering syntax from old function.",
+      "EndLine": 7525,
+      "Instruction": "Remove the last stray lines from the old PDF function",
+      "ReplacementContent": "    }\n\n    // ---------------------------------\n    // Magnetic / Smart Card Reader Logic",
+      "StartLine": 7519,
+      "TargetContent": "    }\n\n\n        }, 250);\n    }\n\n    // ---------------------------------\n    // Magnetic / Smart Card Reader Logic",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Removing final stray lines from old directExportPDF",
+      "toolSummary": "Remove stray PDF lines index.html"
+    }
+  },
+  {
+    "name": "replace_file_content",
+    "args": {
+      "AllowMultiple": false,
+      "Description": "Restoring syntax integrity to fix the UI breaking.",
+      "EndLine": 7517,
+      "Instruction": "Restore printMasterReport and directExportPDF without the syntax errors that broke the whole application.",
+      "ReplacementContent": "    function printMasterReport() {\n        const printContent = document.getElementById('masterReportPrintArea').innerHTML;\n        const printWindow = window.open('', '', 'width=1000,height=700');\n        printWindow.document.write(`\n            <html>\n                <head>\n                    <title>Print Master Report</title>\n                    <style>\n                        body { font-family: Arial, sans-serif; padding: 20px; color: #000; background: #fff; }\n                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }\n                        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }\n                        th:nth-child(3), td:nth-child(3) { text-align: left; }\n                        th { background-color: #f1f5f9; -webkit-print-color-adjust: exact; font-weight: bold; }\n                        h2 { text-align: center; color: #000; margin-bottom: 5px; }\n                        .date-info { text-align: center; font-style: italic; color: #666; margin-bottom: 20px; }\n                    </style>\n                </head>\n                <body>\n                    <h2>👥 Employees Directory Master Report</h2>\n                    <div class=\"date-info\">Generated on: ${new Date().toLocaleDateString()}</div>\n                    ${printContent}\n                </body>\n            </html>\n        `);\n        printWindow.document.close();\n        printWindow.focus();\n        setTimeout(() => {\n            printWindow.print();\n            printWindow.close();\n        }, 250);\n    }\n\n    function directExportPDF() {\n        if (typeof Swal !== 'undefined') {\n            Swal.fire({\n                title: 'Generating PDF...',\n                text: 'Please wait while we prepare your professional report.',\n                icon: 'info',\n                allowOutsideClick: false,\n                didOpen: () => { Swal.showLoading(); }\n            });\n        }\n        \n        let html = `\n            <table style=\"width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px;\">\n                <thead>\n                    <tr>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">#</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">ID</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: left; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Name</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Company</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Destination</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Phone</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Work (Days)</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Leave (Days)</th>\n                    </tr>\n                </thead>\n                <tbody>\n        `;\n        \n        let displayList = filteredEmployees.map(e => {\n            let totalWork = 0, totalLeave = 0;\n            if (e.Rotations) {\n                e.Rotations.forEach(r => {\n                    const days = Math.floor((parseDate(r.end).getTime() - parseDate(r.start).getTime()) / (1000 * 3600 * 24)) + 1;\n                    if (r.type === 'work' || r.type === 'standby_cover') totalWork += days;\n                    if (r.type === 'leave' || r.type === 'rest') totalLeave += days;\n                });\n            }\n            return { ...e, computedWork: totalWork, computedLeave: totalLeave };\n        });\n\n        displayList.forEach((e, idx) => {\n            html += `<tr>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #334155;\">${idx + 1}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; font-weight: bold; color: #0f172a;\">${e.ID || '-'}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: left; color: #334155;\">\n                    <div style=\"font-weight: 600;\">${e.Name || '-'}</div>\n                </td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #334155;\">${e.Company || '-'}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #334155;\">${e.Destination || '-'}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #334155;\">${e.Phone || '-'}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #10b981; font-weight: 600;\">${e.computedWork}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #ef4444; font-weight: 600;\">${e.computedLeave}</td>\n            </tr>`;\n        });\n        html += `</tbody></table>`;\n\n        const script = document.createElement('script');\n        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';\n        script.onload = () => {\n            const tempDiv = document.createElement('div');\n            tempDiv.innerHTML = `\n                <div style=\"padding: 20px; background: white; color: black; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;\">\n                    <div style=\"display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px;\">\n                        <h2 style=\"margin: 0; color: #1e293b; font-size: 20px; font-weight: 800;\">✨ HR-BLK53 Master Directory</h2>\n                        <div style=\"text-align: right; font-size: 10px; color: #64748b;\">\n                            <div>Generated: ${new Date().toLocaleDateString('en-GB')}</div>\n                            <div>Total Personnel: ${displayList.length}</div>\n                        </div>\n                    </div>\n                    ${html}\n                </div>\n            `;\n            \n            const opt = {\n                margin:       0.4,\n                filename:     'HR_Master_Report_' + new Date().toISOString().split('T')[0] + '.pdf',\n                image:        { type: 'jpeg', quality: 0.98 },\n                html2canvas:  { scale: 2, useCORS: true },\n                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }\n            };\n            \n            html2pdf().set(opt).from(tempDiv).save().then(() => {\n                if (typeof Swal !== 'undefined') Swal.close();\n            });\n        };\n        script.onerror = () => {\n            if (typeof Swal !== 'undefined') {\n                Swal.fire('Error', 'Failed to load PDF engine. Check your internet connection.', 'error');\n            }\n        };\n        document.head.appendChild(script);\n    }",
+      "StartLine": 7425,
+      "TargetContent": "    function printMasterReport() {\n        const printContent = document.getElementById('masterReportPrintArea').innerHTML;\n        const printWindow = window.open('', '', 'width=1000,height=700');\n        printWindow.document.write(`\n            <html>\n                <head>\n                    <title>P    function directExportPDF() {\n        if (typeof Swal !== 'undefined') {\n            Swal.fire({\n                title: 'Generating PDF...',\n                text: 'Please wait while we prepare your professional report.',\n                icon: 'info',\n                allowOutsideClick: false,\n                didOpen: () => { Swal.showLoading(); }\n            });\n        }\n        \n        let html = `\n            <table style=\"width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 11px;\">\n                <thead>\n                    <tr>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">#</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">ID</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: left; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Name</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Company</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Destination</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Phone</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Work (Days)</th>\n                        <th style=\"border: 1px solid #cbd5e1; padding: 8px; text-align: center; background-color: #f1f5f9; font-weight: bold; color: #1e293b;\">Leave (Days)</th>\n                    </tr>\n                </thead>\n                <tbody>\n        `;\n        \n        let displayList = filteredEmployees.map(e => {\n            let totalWork = 0, totalLeave = 0;\n            if (e.Rotations) {\n                e.Rotations.forEach(r => {\n                    const days = Math.floor((parseDate(r.end).getTime() - parseDate(r.start).getTime()) / (1000 * 3600 * 24)) + 1;\n                    if (r.type === 'work' || r.type === 'standby_cover') totalWork += days;\n                    if (r.type === 'leave' || r.type === 'rest') totalLeave += days;\n                });\n            }\n            return { ...e, computedWork: totalWork, computedLeave: totalLeave };\n        });\n\n        displayList.forEach((e, idx) => {\n            html += `<tr>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #334155;\">${idx + 1}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; font-weight: bold; color: #0f172a;\">${e.ID || '-'}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: left; color: #334155;\">\n                    <div style=\"font-weight: 600;\">${e.Name || '-'}</div>\n                </td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #334155;\">${e.Company || '-'}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #334155;\">${e.Destination || '-'}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #334155;\">${e.Phone || '-'}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #10b981; font-weight: 600;\">${e.computedWork}</td>\n                <td style=\"border: 1px solid #cbd5e1; padding: 6px; text-align: center; color: #ef4444; font-weight: 600;\">${e.computedLeave}</td>\n            </tr>`;\n        });\n        html += `</tbody></table>`;\n\n        const script = document.createElement('script');\n        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';\n        script.onload = () => {\n            const tempDiv = document.createElement('div');\n            tempDiv.innerHTML = `\n                <div style=\"padding: 20px; background: white; color: black; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;\">\n                    <div style=\"display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 15px;\">\n                        <h2 style=\"margin: 0; color: #1e293b; font-size: 20px; font-weight: 800;\">?? HR-BLK53 Master Directory</h2>\n                        <div style=\"text-align: right; font-size: 10px; color: #64748b;\">\n                            <div>Generated: ${new Date().toLocaleDateString('en-GB')}</div>\n                            <div>Total Personnel: ${displayList.length}</div>\n                        </div>\n                    </div>\n                    ${html}\n                </div>\n            `;\n            \n            const opt = {\n                margin:       0.4,\n                filename:     'HR_Master_Report_' + new Date().toISOString().split('T')[0] + '.pdf',\n                image:        { type: 'jpeg', quality: 0.98 },\n                html2canvas:  { scale: 2, useCORS: true },\n                jsPDF:        { unit: 'in', format: 'a4', orientation: 'portrait' }\n            };\n            \n            html2pdf().set(opt).from(tempDiv).save().then(() => {\n                if (typeof Swal !== 'undefined') Swal.close();\n            });\n        };\n        script.onerror = () => {\n            if (typeof Swal !== 'undefined') {\n                Swal.fire('Error', 'Failed to load PDF engine. Check your internet connection.', 'error');\n            }\n        };\n        document.head.appendChild(script);\n    }",
+      "TargetFile": "d:\\Rotations\\index.html",
+      "toolAction": "Fixing the syntax error disaster",
+      "toolSummary": "Fix JS syntax disaster index.html"
+    }
+  }
+]
